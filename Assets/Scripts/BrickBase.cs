@@ -13,10 +13,10 @@ public class BrickBase : MonoBehaviour {
         
     }
 
-    void OnCollisionEnter(Collision other) {
+    void OnCollisionEnter2D(Collision2D other) {
         Destroy(gameObject);
     }
-    void OnTriggerEnter(Collider other) {
+    void OnTriggerEnter2D(Collider2D other) {
         Destroy(gameObject);
     }
 }

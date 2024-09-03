@@ -2,35 +2,36 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(Rigidbody2D))]
 public class BatController : MonoBehaviour {
 
-    Rigidbody rb;
+    Rigidbody2D rb;
 
     public float move_speed = 10f;
 
     // Start is called before the first frame update
     void Start() {
-        rb = GetComponent<Rigidbody>();
+        rb = GetComponent<Rigidbody2D>();
     }
 
     void FixedUpdate() {
         // XXX axis? + mouse?
         if (Input.GetKey(KeyCode.LeftArrow)) {
-            rb.MovePosition(rb.position + new Vector3(-move_speed * Time.fixedDeltaTime, 0f, 0f));
+            rb.MovePosition(rb.position + new Vector2(-move_speed * Time.fixedDeltaTime, 0f));
         }
         if (Input.GetKey(KeyCode.RightArrow)) {
-            rb.MovePosition(rb.position + new Vector3(move_speed * Time.fixedDeltaTime, 0f, 0f));
+            rb.MovePosition(rb.position + new Vector2(move_speed * Time.fixedDeltaTime, 0f));
         }
     }
 
-    void OnCollisionEnter(Collision other) {
+    void OnCollisionEnter2D(Collision2D other) {
         if (other.gameObject.CompareTag("Ball")) {
-            float x_size = GetComponentInChildren<Collider>().bounds.size.x;
-            float offset_percent = (other.GetContact(0).point - transform.position).x * 2 / x_size;
-            Rigidbody ball_rb = other.gameObject.GetComponent<Rigidbody>();
+            float x_size = GetComponentInChildren<Collider2D>().bounds.size.x;
+            Vector2 pos = transform.position;
+            float offset_percent = (other.GetContact(0).point - pos).x * 2 / x_size;
+            Rigidbody2D ball_rb = other.gameObject.GetComponent<Rigidbody2D>();
             float magn = ball_rb.velocity.magnitude;
-            ball_rb.velocity += new Vector3(ball_rb.velocity.magnitude * offset_percent, 0f, 0f);
+            ball_rb.velocity += new Vector2(ball_rb.velocity.magnitude * offset_percent, 0f);
             ball_rb.velocity = ball_rb.velocity.normalized * magn;
         }
     }

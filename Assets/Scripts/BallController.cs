@@ -2,31 +2,31 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(Rigidbody2D))]
 public class BallController : MonoBehaviour {
 
-    Rigidbody rb;
+    Rigidbody2D rb;
 
     public float speed = 10f;
     float vertical_speed_min { get { return speed * 0.1f; } }
 
     bool freezed = true;
-    Vector3 freezed_vel;
+    Vector2 freezed_vel;
 
-    Vector3 last_vel;
+    Vector2 last_vel;
 
     // Start is called before the first frame update
     void Start() {
-        rb = GetComponent<Rigidbody>();
+        rb = GetComponent<Rigidbody2D>();
         Freeze();
-        freezed_vel = new Vector3(1f, 1f, 0f) * speed;  // XXX good for initial ball but not spawned during play
+        freezed_vel = new Vector2(1f, 1f) * speed;  // XXX good for initial ball but not spawned during play
     }
 
     void FixedUpdate() {
         if (!freezed) {
             rb.velocity = rb.velocity.normalized * speed;
             if (Mathf.Abs(rb.velocity.y) < vertical_speed_min)
-                rb.velocity = new Vector3(rb.velocity.x, Mathf.Sign(rb.velocity.normalized.y) * vertical_speed_min, rb.velocity.z).normalized;
+                rb.velocity = new Vector2(rb.velocity.x, Mathf.Sign(rb.velocity.normalized.y) * vertical_speed_min).normalized;
             last_vel = rb.velocity;
         }
     }
@@ -35,28 +35,29 @@ public class BallController : MonoBehaviour {
     void Update() {
     }
 
-    void OnTriggerEnter(Collider other) {
+    void OnTriggerEnter2D(Collider2D other) {
         Debug.Log("trigger overlap with " + other.gameObject.name);
     }
 
-    void OnTriggerStay(Collider other) {
+    void OnTriggerStay2D(Collider2D other) {
         Debug.Log("trigger stay with " + other.gameObject.name);
         if (other.gameObject.CompareTag("Border")) {  // XXX class with tags?
-            Vector3 collisionPoint = other.ClosestPoint(transform.position);
+            Vector2 pos = transform.position;
+            Vector2 collisionPoint = other.ClosestPoint(transform.position);
             // ContactPoint cp = other.GetContact(0);
-            Vector3 normal = (collisionPoint - transform.position).normalized;
+            Vector2 normal = (collisionPoint - pos).normalized;
 
-            if (Vector3.Dot(rb.velocity, normal) > 0f) {
+            if (Vector2.Dot(rb.velocity, normal) > 0f) {
                 Debug.Log("velocity change: " + rb.velocity.ToString() + " -> " + Vector3.Reflect(rb.velocity, normal).ToString() + "; normal " + normal.ToString());
                 rb.velocity = Vector3.Reflect(rb.velocity, normal);
             }
         }
     }
 
-    void OnCollisionEnter(Collision other) {
+    void OnCollisionEnter2D(Collision2D other) {
         if (other.gameObject.CompareTag("Border")) {
             if (Mathf.Abs(rb.velocity.x) < Mathf.Abs(last_vel.x))
-                rb.velocity.Set(Mathf.Abs(last_vel.x) * Mathf.Sign(rb.velocity.x), rb.velocity.y, rb.velocity.z);
+                rb.velocity.Set(Mathf.Abs(last_vel.x) * Mathf.Sign(rb.velocity.x), rb.velocity.y);
             last_vel = rb.velocity;
         }
     }
@@ -65,11 +66,11 @@ public class BallController : MonoBehaviour {
         freezed = true;
         freezed_vel = rb.velocity;
         rb.velocity = Vector3.zero;
-        GetComponent<Collider>().enabled = false;
+        GetComponent<Collider2D>().enabled = false;
     }
     public void Unfreeze() {
         freezed = false;
         rb.velocity = freezed_vel;
-        GetComponent<Collider>().enabled = true;
+        GetComponent<Collider2D>().enabled = true;
     }
 }

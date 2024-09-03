@@ -16,11 +16,12 @@ public class LevelController : MonoBehaviour {
         bat_c = FindObjectOfType<BatController>();
 
         initial_ball_c.transform.position = bat_c.transform.position + new Vector3(0f, 10f, 0f);
-        Vector3 ball_point = initial_ball_c.GetComponent<Collider>().ClosestPoint(bat_c.transform.position);  // XXX ?
+        Vector3 ball_point = initial_ball_c.GetComponent<Collider2D>().ClosestPoint(bat_c.transform.position);  // XXX ?
         Vector3 ball_offset = initial_ball_c.transform.position - ball_point;
         //Debug.Log("ball collider size: " + ball_offset.ToString());
         //Debug.Log("bat point: " + bat_c.GetComponent<Collider>().ClosestPoint(initial_ball_c.transform.position).ToString());
-        initial_ball_c.transform.position = bat_c.GetComponentInChildren<Collider>().ClosestPoint(initial_ball_c.transform.position) + ball_offset;
+        initial_ball_c.transform.position = bat_c.GetComponentInChildren<Collider2D>().ClosestPoint(initial_ball_c.transform.position);
+        initial_ball_c.transform.position += ball_offset;
 
         initial_ball_c.transform.SetParent(bat_c.transform);
     }
