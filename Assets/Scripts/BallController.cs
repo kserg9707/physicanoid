@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,19 +16,23 @@ public class BallController : MonoBehaviour {
 
     Vector2 last_vel;
 
+    public float GetColliderRadius() {
+        CircleCollider2D col = rb.GetComponent<CircleCollider2D>();
+        return col.radius * col.transform.lossyScale.y;
+    }
+
+    public void ResetVelocity() {
+        rb.velocity = new Vector2(1f, 1f) * speed;  // XXX good for initial ball but not spawned during play
+    }
+
     // Start is called before the first frame update
     void Start() {
         rb = GetComponent<Rigidbody2D>();
-        freezed_vel = new Vector2(1f, 1f) * speed;  // XXX good for initial ball but not spawned during play
+        ResetVelocity();
     }
 
     void FixedUpdate() {
-        if (!freezed) {
-            rb.velocity = rb.velocity.normalized * speed;
-            if (Mathf.Abs(rb.velocity.y) < vertical_speed_min)
-                rb.velocity = new Vector2(rb.velocity.x, Mathf.Sign(rb.velocity.normalized.y) * vertical_speed_min).normalized;
-            last_vel = rb.velocity;
-        }
+        KeepSpeed();
     }
 
     // Update is called once per frame
@@ -36,6 +41,9 @@ public class BallController : MonoBehaviour {
 
     void OnTriggerEnter2D(Collider2D other) {
         Debug.Log("trigger overlap with " + other.gameObject.name);
+        // XXX temp
+
+        FindObjectOfType<LevelController>().BallFallCallback();
     }
 
     void OnTriggerStay2D(Collider2D other) {
@@ -54,11 +62,27 @@ public class BallController : MonoBehaviour {
     }
 
     void OnCollisionEnter2D(Collision2D other) {
-        if (other.gameObject.CompareTag("Border")) {
-            if (Mathf.Abs(rb.velocity.x) < Mathf.Abs(last_vel.x))
-                rb.velocity.Set(Mathf.Abs(last_vel.x) * Mathf.Sign(rb.velocity.x), rb.velocity.y);
+        //if (other.gameObject.CompareTag("Border")) {
+        //    if (Mathf.Abs(rb.velocity.x) < Mathf.Abs(last_vel.x))
+        //        rb.velocity.Set(Mathf.Abs(last_vel.x) * Mathf.Sign(rb.velocity.x), rb.velocity.y);
+        //    last_vel = rb.velocity;
+        //}
+    }
+
+    void KeepSpeed() {
+        if (!freezed) {
+            rb.velocity = rb.velocity.normalized * speed;
+            if (Mathf.Abs(rb.velocity.y) < vertical_speed_min)
+                rb.velocity = new Vector2(rb.velocity.x, Mathf.Sign(rb.velocity.normalized.y) * vertical_speed_min).normalized;
             last_vel = rb.velocity;
         }
+    }
+
+    public void SetPosition(Vector3 pos) {
+        if (freezed)
+            transform.position = pos;
+        else
+            rb.MovePosition(pos);
     }
 
     public void Freeze() {

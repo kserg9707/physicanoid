@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 4634795596110191099}
   m_Layer: 0
   m_Name: Brick
-  m_TagString: Border
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -111,7 +111,7 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
   m_Constraints: 0
 --- !u!61 &3246964071287371157
 BoxCollider2D:

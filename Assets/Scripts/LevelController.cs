@@ -1,35 +1,77 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.SocialPlatforms.Impl;
 
 public class LevelController : MonoBehaviour {
 
     bool started = false;
+    int player_score = 0;  // XXX not here?
+
+    public int fall_score_lost = 3;  // score lost at ball fall
+
+    UIController ui_c;
 
     BallController initial_ball_c;
     BatController bat_c;
+    BrickBase[] bricks;
 
-    // Start is called before the first frame update
-    void Start() {
-        initial_ball_c = FindObjectOfType<BallController>();
-        bat_c = FindObjectOfType<BatController>();
-        Rigidbody2D ball_rb = initial_ball_c.GetComponent<Rigidbody2D>();
-        Rigidbody2D bat_rb = bat_c.GetComponent<Rigidbody2D>();
+    public void BrickDestroyCallback(int score) {
+        player_score += score;
+        ui_c.UpdateScoreCB(player_score);
+    }
 
-        Vector2 KEK = ball_rb.position + new Vector2(0f, -5f);
-        Collider2D KEKEK = ball_rb.GetComponent<Collider2D>();
-        Vector2 ball_point = KEKEK.ClosestPoint(KEK);
-        Vector2 ball_offset = ball_rb.position - ball_point;
-        Debug.Log("KEK: " + KEK.ToString()); //ball_offset.ToString());
-        Debug.Log("ball collider point: " + ball_point.ToString()); //ball_offset.ToString());
-        Debug.Log("ball collider size: " + ball_offset.ToString());
-        Debug.Log("bat point: " + bat_c.GetComponentInChildren<Collider2D>().ClosestPoint(bat_rb.position + new Vector2(0f, 5f)).ToString());
-        ball_rb.MovePosition(bat_c.GetComponentInChildren<Collider2D>().ClosestPoint(ball_rb.position + new Vector2(0f, 5f)) + ball_offset);
+    public void BallFallCallback() {
+        player_score -= fall_score_lost;
+        ui_c.UpdateScoreCB(player_score);
+        ResetBall();
+    }
+
+    void ResetBall() {
+        initial_ball_c.ResetVelocity();
+        SetBallToBat();
+        started = false;
+    }
+
+    void SetBallToBat() {
+        Vector3 target_pos = bat_c.transform.position + new Vector3(0f, bat_c.GetUpperPlaneY() + initial_ball_c.GetColliderRadius());
 
         initial_ball_c.transform.SetParent(bat_c.transform);
         initial_ball_c.Freeze();
-        initial_ball_c.transform.position = ball_rb.position;
+        initial_ball_c.SetPosition(target_pos);
+    }
+
+    void SetBricksFreezed(bool freezed) {
+        foreach (BrickBase b in bricks) {
+            if (!b.IsDestroyed())
+                b.GetComponent<Rigidbody2D>().constraints = (freezed) ? RigidbodyConstraints2D.FreezeAll : RigidbodyConstraints2D.None;
+        }
+    }
+
+    void ExitLevel() {
+        Application.Quit();
+    }
+
+    // Start is called before the first frame update
+    void Start() {
+        ui_c = FindObjectOfType<UIController>();
+        ui_c.UpdateScoreCB(player_score);
+
+        initial_ball_c = FindObjectOfType<BallController>();
+        bat_c = FindObjectOfType<BatController>();
+        bricks = FindObjectsOfType<BrickBase>();
+
+        SetBallToBat();
+
+        SetBricksFreezed(true);
+        StartCoroutine(UnfreezeBricksAfterTime(5f));
+    }
+
+    IEnumerator UnfreezeBricksAfterTime(float time) {
+        yield return new WaitForSeconds(time);
+        SetBricksFreezed(false);
     }
 
     // Update is called once per frame
@@ -45,5 +87,8 @@ public class LevelController : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.Backspace)) {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+            ExitLevel();
     }
 }

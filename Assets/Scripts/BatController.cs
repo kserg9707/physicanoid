@@ -9,6 +9,12 @@ public class BatController : MonoBehaviour {
 
     public float move_speed = 10f;
 
+    public float GetUpperPlaneY() {
+        BoxCollider2D col = GetComponentInChildren<BoxCollider2D>();
+        return col.size.y * 0.5f * col.transform.lossyScale.y;
+        // return rb.ClosestPoint(rb.position + Vector2.up * transform.lossyScale.y * 10f).y;
+    }
+
     // Start is called before the first frame update
     void Start() {
         rb = GetComponent<Rigidbody2D>();
