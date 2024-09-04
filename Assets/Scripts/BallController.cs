@@ -18,7 +18,6 @@ public class BallController : MonoBehaviour {
     // Start is called before the first frame update
     void Start() {
         rb = GetComponent<Rigidbody2D>();
-        Freeze();
         freezed_vel = new Vector2(1f, 1f) * speed;  // XXX good for initial ball but not spawned during play
     }
 
@@ -66,11 +65,13 @@ public class BallController : MonoBehaviour {
         freezed = true;
         freezed_vel = rb.velocity;
         rb.velocity = Vector3.zero;
+        rb.simulated = false;
         GetComponent<Collider2D>().enabled = false;
     }
     public void Unfreeze() {
         freezed = false;
         rb.velocity = freezed_vel;
+        rb.simulated = true;
         GetComponent<Collider2D>().enabled = true;
     }
 }
