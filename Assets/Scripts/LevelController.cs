@@ -7,11 +7,17 @@ using UnityEngine.SocialPlatforms.Impl;
 
 public class LevelController : MonoBehaviour {
 
-    bool started = false;
+    bool started = false;  // level started
+    bool launched = false;  // ball launched
     int player_score = 0;  // XXX not here?
+
+    public ParticleSystem bricks_unfreeze_effect;
+    public AudioSource sound_ball_fall;
+    public AudioSource sound_lose;  // XXX
 
     public int fall_score_lost = 3;  // score lost at ball fall
 
+    GlobalGameSettings ggc;
     UIController ui_c;
 
     BallController initial_ball_c;
@@ -27,12 +33,13 @@ public class LevelController : MonoBehaviour {
         player_score -= fall_score_lost;
         ui_c.UpdateScoreCB(player_score);
         ResetBall();
+        sound_ball_fall.Play();
     }
 
     void ResetBall() {
         initial_ball_c.ResetVelocity();
         SetBallToBat();
-        started = false;
+        launched = false;
     }
 
     void SetBallToBat() {
@@ -56,6 +63,7 @@ public class LevelController : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start() {
+        ggc = FindObjectOfType<GlobalGameSettings>();
         ui_c = FindObjectOfType<UIController>();
         ui_c.UpdateScoreCB(player_score);
 
@@ -66,19 +74,36 @@ public class LevelController : MonoBehaviour {
         SetBallToBat();
 
         SetBricksFreezed(true);
-        StartCoroutine(UnfreezeBricksAfterTime(5f));
     }
 
-    IEnumerator UnfreezeBricksAfterTime(float time) {
+    IEnumerator UnfreezeBricksAfterTime(float time, float effect_start_time) {
+        if (effect_start_time < 0)
+            effect_start_time = 0;
+        if (effect_start_time > time)
+            effect_start_time = time;
+        time -= effect_start_time;
+
+        yield return new WaitForSeconds(effect_start_time);
+        if (bricks_unfreeze_effect != null)
+            bricks_unfreeze_effect.Play();
+
         yield return new WaitForSeconds(time);
         SetBricksFreezed(false);
+        foreach (BrickBase b in bricks)
+            if (!b.IsDestroyed()) {
+                b.GetComponent<Rigidbody2D>().AddForce(Random.insideUnitSphere * ggc.brick_base_mass * 10f);
+            }
     }
 
     // Update is called once per frame
     void Update() {
-        if (!started) {
+        if (!launched) {
             if (Input.GetKeyDown(KeyCode.Space)) {
-                started = true;
+                if (!started) {
+                    StartCoroutine(UnfreezeBricksAfterTime(5f, 4f));  // XXX params
+                    started = true;
+                }
+                launched = true;
                 initial_ball_c.transform.SetParent(null);
                 initial_ball_c.Unfreeze();
             }

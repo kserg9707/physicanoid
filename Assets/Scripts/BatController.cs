@@ -9,6 +9,8 @@ public class BatController : MonoBehaviour {
 
     public float move_speed = 10f;
 
+    public AudioSource sound_ball_hit;
+
     public float GetUpperPlaneY() {
         BoxCollider2D col = GetComponentInChildren<BoxCollider2D>();
         return col.size.y * 0.5f * col.transform.lossyScale.y;
@@ -39,6 +41,8 @@ public class BatController : MonoBehaviour {
             float magn = ball_rb.velocity.magnitude;
             ball_rb.velocity += new Vector2(ball_rb.velocity.magnitude * offset_percent, 0f);
             ball_rb.velocity = ball_rb.velocity.normalized * magn;
+
+            sound_ball_hit.Play();
         }
     }
 

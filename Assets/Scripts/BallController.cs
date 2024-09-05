@@ -28,6 +28,8 @@ public class BallController : MonoBehaviour {
     // Start is called before the first frame update
     void Start() {
         rb = GetComponent<Rigidbody2D>();
+
+        rb.mass = FindObjectOfType<GlobalGameSettings>().ball_base_mass;  // XXX ?
         ResetVelocity();
     }
 
