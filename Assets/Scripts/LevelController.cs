@@ -7,20 +7,22 @@ using UnityEngine.SocialPlatforms.Impl;
 
 public class LevelController : MonoBehaviour {
 
-    bool started = false;  // level started
+    bool started = false;  // level started (first launch occured)
     bool launched = false;  // ball launched
     int player_score = 0;  // XXX not here?
     bool level_win = false;
-    int player_lives = 3;
+    int player_lives = 3;  // initial player lives
     bool level_lose = false;
 
-    public bool physics_enabled = false;
-    public float physics_enable_delay = 7f;
-    public float physics_enable_effect_delay = 6f;  // from level start
+    // level config
+    public bool physics_enabled = false;  // is physics enabled on level
+    public float physics_enable_delay = 7f;  // seconds before physics enabling
+    public float physics_enable_effect_delay = 6f;  // also from level start
 
     public ParticleSystem bricks_unfreeze_effect;
     public AudioSource sound_ball_fall;
-    public AudioSource sound_lose;  // XXX
+    public AudioSource sound_win;
+    public AudioSource sound_lose;
 
     public int fall_score_lost = 3;  // score lost at ball fall
 
@@ -33,6 +35,7 @@ public class LevelController : MonoBehaviour {
 
     int bricks_left = 0;
 
+    // call it from brick only on destruction, this method tracks win conditions and score
     public void BrickDestroyCallback(int score) {
         if (!launched)
             return;
@@ -43,14 +46,15 @@ public class LevelController : MonoBehaviour {
             LevelWin();
     }
 
+    // call it on ball fall, this method tracks lose conditions and resets ball
     public void BallFallCallback() {
-        sound_ball_fall.Play();
-
         if (level_win)
             ResetBall();
 
         if (!launched)
             return;
+
+        sound_ball_fall.Play();
 
         player_score -= fall_score_lost;
         ui_c.UpdateScoreCB(player_score);
@@ -66,12 +70,14 @@ public class LevelController : MonoBehaviour {
             initial_ball_c.Freeze();
     }
 
+    // suspend game and set ball to bat
     void ResetBall() {
         initial_ball_c.ResetVelocity();
         SetBallToBat();
         launched = false;
     }
 
+    // set ball to bat and freeze it
     void SetBallToBat() {
         Vector3 target_pos = bat_c.transform.position + new Vector3(0f, bat_c.GetUpperPlaneY() + initial_ball_c.GetColliderRadius());
 
@@ -80,6 +86,7 @@ public class LevelController : MonoBehaviour {
         initial_ball_c.SetPosition(target_pos);
     }
 
+    // freeze or unfreeze all blocks
     void SetBricksFreezed(bool freezed) {
         foreach (BrickBase b in bricks) {
             if (!b.IsDestroyed())
@@ -87,20 +94,26 @@ public class LevelController : MonoBehaviour {
         }
     }
 
+    // called on win condition
     void LevelWin() {
         if (!launched)
             return;
         level_win = true;
         launched = false;
         ui_c.SetStateMessage("Win");
+        if (sound_win != null)
+            sound_win.Play();
     }
 
+    // called on lose condition
     void LevelLose() {
         if (!launched)
             return;
         level_lose = true;
         launched = false;
         ui_c.SetStateMessage("Lose");
+        if (sound_lose != null)
+            sound_lose.Play();
     }
 
     void ExitLevel() {
@@ -125,6 +138,7 @@ public class LevelController : MonoBehaviour {
         SetBricksFreezed(true);
     }
 
+    // coroutine to enable physics  // XXX suspend while not launched?
     IEnumerator UnfreezeBricksAfterTime(float time, float effect_start_time) {
         if (effect_start_time < 0)
             effect_start_time = 0;
