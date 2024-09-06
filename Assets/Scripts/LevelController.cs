@@ -10,6 +10,9 @@ public class LevelController : MonoBehaviour {
     bool started = false;  // level started
     bool launched = false;  // ball launched
     int player_score = 0;  // XXX not here?
+    bool level_win = false;
+    int player_lives = 3;
+    bool level_lose = false;
 
     public ParticleSystem bricks_unfreeze_effect;
     public AudioSource sound_ball_fall;
@@ -24,16 +27,36 @@ public class LevelController : MonoBehaviour {
     BatController bat_c;
     BrickBase[] bricks;
 
+    int bricks_left = 0;
+
     public void BrickDestroyCallback(int score) {
+        if (!launched)
+            return;
         player_score += score;
         ui_c.UpdateScoreCB(player_score);
+        bricks_left--;
+        if (bricks_left <= 0)
+            LevelWin();
     }
 
     public void BallFallCallback() {
+        sound_ball_fall.Play();
+
+        if (!launched)
+            return;
+
         player_score -= fall_score_lost;
         ui_c.UpdateScoreCB(player_score);
-        ResetBall();
-        sound_ball_fall.Play();
+
+        player_lives--;
+        ui_c.SetLivesCount(player_lives);
+        if (player_lives <= 0)
+            LevelLose();
+
+        if (!level_lose)
+            ResetBall();
+        else
+            initial_ball_c.Freeze();
     }
 
     void ResetBall() {
@@ -57,6 +80,22 @@ public class LevelController : MonoBehaviour {
         }
     }
 
+    void LevelWin() {
+        if (!launched)
+            return;
+        level_win = true;
+        launched = false;
+        ui_c.SetStateMessage("Win");
+    }
+
+    void LevelLose() {
+        if (!launched)
+            return;
+        level_lose = true;
+        launched = false;
+        ui_c.SetStateMessage("Lose");
+    }
+
     void ExitLevel() {
         Application.Quit();
     }
@@ -66,10 +105,13 @@ public class LevelController : MonoBehaviour {
         ggc = FindObjectOfType<GlobalGameSettings>();
         ui_c = FindObjectOfType<UIController>();
         ui_c.UpdateScoreCB(player_score);
+        ui_c.SetLivesCount(player_lives);
+        ui_c.ResetStateMessage();
 
         initial_ball_c = FindObjectOfType<BallController>();
         bat_c = FindObjectOfType<BatController>();
         bricks = FindObjectsOfType<BrickBase>();
+        bricks_left = bricks.Length;
 
         SetBallToBat();
 
@@ -97,7 +139,7 @@ public class LevelController : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        if (!launched) {
+        if (!launched && !level_lose && !level_win) {
             if (Input.GetKeyDown(KeyCode.Space)) {
                 if (!started) {
                     StartCoroutine(UnfreezeBricksAfterTime(5f, 4f));  // XXX params

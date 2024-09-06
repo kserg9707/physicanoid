@@ -42,6 +42,8 @@ public class BallController : MonoBehaviour {
     }
 
     void OnTriggerEnter2D(Collider2D other) {
+        if (!other.CompareTag("Border"))
+            return;
         Debug.Log("trigger overlap with " + other.gameObject.name);
         // XXX temp
 
@@ -69,6 +71,7 @@ public class BallController : MonoBehaviour {
         //        rb.velocity.Set(Mathf.Abs(last_vel.x) * Mathf.Sign(rb.velocity.x), rb.velocity.y);
         //    last_vel = rb.velocity;
         //}
+        KeepSpeed();
     }
 
     void KeepSpeed() {

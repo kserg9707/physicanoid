@@ -7,6 +7,8 @@ public class BrickBase : MonoBehaviour {
     Rigidbody2D rb;
     LevelController lc;
     AudioSource sound_ball_hit;
+    [SerializeField]
+    AudioSource sound_brick_hit;
 
     public float mass_multiplier = 1f;
 
@@ -38,7 +40,7 @@ public class BrickBase : MonoBehaviour {
             if (rbo != null) {
                 Vector2 force_vec = rbo.position - rb.position;
                 float koef = Mathf.Clamp01((destroy_explosion_raduis * destroy_explosion_raduis - force_vec.sqrMagnitude) / (destroy_explosion_raduis * destroy_explosion_raduis));
-                rbo.AddForce(force_vec.normalized * destroy_explosion_force * koef, ForceMode2D.Impulse);
+                rbo.AddForce(force_vec.normalized * destroy_explosion_force * koef*5f, ForceMode2D.Impulse);
                 // rbo.AddForceAtPosition((rbo.position - rb.position).normalized * destroy_explosion_force, rb.position, ForceMode2D.Impulse);
             }
         }
@@ -53,6 +55,9 @@ public class BrickBase : MonoBehaviour {
                 GetComponentInChildren<Collider2D>().gameObject.SetActive(false); //Destroy(gameObject);
                 lc.BrickDestroyCallback(score);
             }
+        } else if (other.gameObject.CompareTag("Brick")) {
+            if (sound_brick_hit != null)
+                sound_brick_hit.Play();
         }
     }
     void OnTriggerEnter2D(Collider2D other) {
