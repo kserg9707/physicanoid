@@ -15,6 +15,7 @@ public class LevelController : MonoBehaviour {
     bool level_lose = false;
 
     // level config
+    public float field_width = 18f;
     public bool physics_enabled = false;  // is physics enabled on level
     public float physics_enable_delay = 7f;  // seconds before physics enabling
     public float physics_enable_effect_delay = 6f;  // also from level start
@@ -34,6 +35,10 @@ public class LevelController : MonoBehaviour {
     BrickBase[] bricks;
 
     int bricks_left = 0;
+
+    public float GetBatAllowedRange() {
+        return field_width * 0.5f - initial_ball_c.GetColliderRadius();;
+    }
 
     // call it from brick only on destruction, this method tracks win conditions and score
     public void BrickDestroyCallback(int score) {

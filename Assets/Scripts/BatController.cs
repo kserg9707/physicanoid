@@ -8,6 +8,7 @@ public class BatController : MonoBehaviour {
     Rigidbody2D rb;
 
     public float move_speed = 10f;  // bat move speed
+    float allowed_x = 0;
 
     public AudioSource sound_ball_hit;
 
@@ -21,15 +22,18 @@ public class BatController : MonoBehaviour {
     // Start is called before the first frame update
     void Start() {
         rb = GetComponent<Rigidbody2D>();
+        allowed_x = FindObjectOfType<LevelController>().GetBatAllowedRange();
     }
 
     void FixedUpdate() {
         // XXX axis? + mouse?
         if (Input.GetKey(KeyCode.LeftArrow)) {
-            rb.MovePosition(rb.position + new Vector2(-move_speed * Time.fixedDeltaTime, 0f));
+            if (rb.position.x > -allowed_x)
+                rb.MovePosition(rb.position + new Vector2(-move_speed * Time.fixedDeltaTime, 0f));
         }
         if (Input.GetKey(KeyCode.RightArrow)) {
-            rb.MovePosition(rb.position + new Vector2(move_speed * Time.fixedDeltaTime, 0f));
+            if (rb.position.x < allowed_x)
+                rb.MovePosition(rb.position + new Vector2(move_speed * Time.fixedDeltaTime, 0f));
         }
     }
 
