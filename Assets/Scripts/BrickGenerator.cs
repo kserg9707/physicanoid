@@ -1,10 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+#if UNITY_EDITOR
 using UnityEditorInternal;
+#endif
 using UnityEngine;
 
+#if UNITY_EDITOR
 [ExecuteInEditMode]
+#endif
 public class BrickGenerator : MonoBehaviour {
 #if UNITY_EDITOR
     public GameObject prefab;

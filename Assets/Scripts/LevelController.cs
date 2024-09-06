@@ -14,6 +14,10 @@ public class LevelController : MonoBehaviour {
     int player_lives = 3;
     bool level_lose = false;
 
+    public bool physics_enabled = false;
+    public float physics_enable_delay = 7f;
+    public float physics_enable_effect_delay = 6f;  // from level start
+
     public ParticleSystem bricks_unfreeze_effect;
     public AudioSource sound_ball_fall;
     public AudioSource sound_lose;  // XXX
@@ -41,6 +45,9 @@ public class LevelController : MonoBehaviour {
 
     public void BallFallCallback() {
         sound_ball_fall.Play();
+
+        if (level_win)
+            ResetBall();
 
         if (!launched)
             return;
@@ -142,7 +149,8 @@ public class LevelController : MonoBehaviour {
         if (!launched && !level_lose && !level_win) {
             if (Input.GetKeyDown(KeyCode.Space)) {
                 if (!started) {
-                    StartCoroutine(UnfreezeBricksAfterTime(5f, 4f));  // XXX params
+                    if (physics_enabled)
+                        StartCoroutine(UnfreezeBricksAfterTime(physics_enable_delay, physics_enable_effect_delay));  // XXX params
                     started = true;
                 }
                 launched = true;
