@@ -10,6 +10,9 @@ public class BatController : MonoBehaviour {
     public float move_speed = 10f;  // bat move speed
     float allowed_x = 0;
 
+    bool mouse_controlled = false;  // whether mouse or keyboard was used last
+    Vector3 last_mouse_position;
+
     public AudioSource sound_ball_hit;
 
     // get world y coord of bat
@@ -23,17 +26,32 @@ public class BatController : MonoBehaviour {
     void Start() {
         rb = GetComponent<Rigidbody2D>();
         allowed_x = FindObjectOfType<LevelController>().GetBatAllowedRange();
+        last_mouse_position = Input.mousePosition;
     }
 
     void FixedUpdate() {
-        // XXX axis? + mouse?
+        // XXX axis?
+        if (Input.mousePosition != last_mouse_position) {
+            mouse_controlled = true;
+            last_mouse_position = Input.mousePosition;
+        }
+
         if (Input.GetKey(KeyCode.LeftArrow)) {
+            mouse_controlled = false;
             if (rb.position.x > -allowed_x)
                 rb.MovePosition(rb.position + new Vector2(-move_speed * Time.fixedDeltaTime, 0f));
         }
         if (Input.GetKey(KeyCode.RightArrow)) {
+            mouse_controlled = false;
             if (rb.position.x < allowed_x)
                 rb.MovePosition(rb.position + new Vector2(move_speed * Time.fixedDeltaTime, 0f));
+        }
+
+        if (mouse_controlled) {
+            float target_pos_x = (last_mouse_position.x - Display.main.renderingWidth / 2) / (Display.main.renderingWidth / 2) * allowed_x;  // XXX or native?
+            // XXX limit movement?
+            float limited_pos_x = Mathf.Clamp(target_pos_x, -allowed_x, allowed_x);
+            rb.MovePosition(new Vector2(Mathf.MoveTowards(rb.position.x, limited_pos_x, move_speed * Time.fixedDeltaTime), rb.position.y));
         }
     }
 

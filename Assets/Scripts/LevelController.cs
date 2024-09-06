@@ -166,7 +166,7 @@ public class LevelController : MonoBehaviour {
     // Update is called once per frame
     void Update() {
         if (!launched && !level_lose && !level_win) {
-            if (Input.GetKeyDown(KeyCode.Space)) {
+            if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)) {
                 if (!started) {
                     if (physics_enabled)
                         StartCoroutine(UnfreezeBricksAfterTime(physics_enable_delay, physics_enable_effect_delay));  // XXX params
