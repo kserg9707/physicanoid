@@ -6,6 +6,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class BallController : MonoBehaviour {
 
+    LevelController lc;
     Rigidbody2D rb;
 
     float speed = 10f;  // keep ball velocity magnitude equal to this
@@ -32,9 +33,9 @@ public class BallController : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start() {
+        lc = FindObjectOfType<LevelController>();
         rb = GetComponent<Rigidbody2D>();
 
-        LevelController lc = FindObjectOfType<LevelController>();
         speed = lc.LevelBallSpeed;
 
         GlobalGameSettings ggc = FindObjectOfType<GlobalGameSettings>();
@@ -44,6 +45,7 @@ public class BallController : MonoBehaviour {
 
     void FixedUpdate() {
         KeepSpeed();
+        Debug.Log("fixed: last vel: " + last_vel.ToString());
     }
 
     // Update is called once per frame
@@ -76,13 +78,33 @@ public class BallController : MonoBehaviour {
     }
 
     void OnCollisionEnter2D(Collision2D other) {
+        if (!lc.PhysicsEnabled && other.collider.CompareTag("Brick")) {
+            // Debug.Log("enter: last vel: " + last_vel.ToString() + ", bounced: " + rb.velocity.ToString());
+            Vector2 p = other.GetContact(0).point; //.collider.ClosestPoint(rb.position);
+            Vector2 delta = rb.position - p;
+            // Debug.Log("enter: delta: " + delta.ToString() + ", col pos: " + p.ToString() + ", ball pos: " + rb.position.ToString());
+            Vector2 res;
+            if (Mathf.Approximately(delta.x, 0f))
+                // res = new Vector2(last_vel.x, -last_vel.y);
+                res = new Vector2(last_vel.x, Mathf.Abs(last_vel.y) * Mathf.Sign(delta.y));
+            else if (Mathf.Approximately(delta.y, 0f))
+                // res = new Vector2(-last_vel.x, last_vel.y);
+                res = new Vector2(Mathf.Abs(last_vel.x) * Mathf.Sign(delta.x), last_vel.y);
+            else if (Mathf.Abs(delta.x) > Mathf.Abs(delta.y))
+                res = new Vector2(Mathf.Abs(last_vel.x) * Mathf.Sign(delta.x), last_vel.y);
+            else
+                res = new Vector2(last_vel.x, Mathf.Abs(last_vel.y) * Mathf.Sign(delta.y));
+            rb.velocity = res;
+            // Debug.Log("enter: corrected: " + rb.velocity.ToString() + ", res: " + res.ToString());
+        }
         KeepSpeed();
     }
+
     void OnCollisionStay2D(Collision2D other) {
-        KeepSpeed();
     }
+
     void OnCollisionExit2D(Collision2D other) {
-        KeepSpeed();
+        // order may be messed and exit does not provide contact points so use only enter
     }
 
     // Update rigidbody velocity to keep specified magnitude

@@ -9,6 +9,7 @@ public class LevelController : MonoBehaviour {
 
     bool started = false;  // level started (first launch occured)
     bool launched = false;  // ball launched
+    bool bricks_freezed = true;
     int player_score = 0;  // XXX not here?
     bool level_win = false;
     int player_lives = 3;  // initial player lives
@@ -28,6 +29,7 @@ public class LevelController : MonoBehaviour {
 
     public int fall_score_lost = 3;  // score lost at ball fall
 
+    public bool PhysicsEnabled { get { return !bricks_freezed; } }
     public float LevelBallSpeed { get { return (physics_enabled) ? default_ball_speed * 0.7f : default_ball_speed; } }
 
     GlobalGameSettings ggc;
@@ -38,6 +40,10 @@ public class LevelController : MonoBehaviour {
     BrickBase[] bricks;
 
     int bricks_left = 0;
+
+    public bool IsLaunched() {
+        return launched;
+    }
 
     public float GetBatAllowedRange() {
         return field_width * 0.5f - initial_ball_c.GetColliderRadius();;
@@ -159,6 +165,7 @@ public class LevelController : MonoBehaviour {
             bricks_unfreeze_effect.Play();
 
         yield return new WaitForSeconds(time);
+        bricks_freezed = false;
         SetBricksFreezed(false);
         foreach (BrickBase b in bricks)
             if (!b.IsDestroyed()) {
@@ -166,18 +173,22 @@ public class LevelController : MonoBehaviour {
             }
     }
 
+    public void Launch() {
+        if (!started) {
+            if (physics_enabled)
+                StartCoroutine(UnfreezeBricksAfterTime(physics_enable_delay, physics_enable_effect_delay));  // XXX params
+            started = true;
+        }
+        launched = true;
+        initial_ball_c.transform.SetParent(null);
+        initial_ball_c.Unfreeze();
+    }
+
     // Update is called once per frame
     void Update() {
         if (!launched && !level_lose && !level_win) {
             if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)) {
-                if (!started) {
-                    if (physics_enabled)
-                        StartCoroutine(UnfreezeBricksAfterTime(physics_enable_delay, physics_enable_effect_delay));  // XXX params
-                    started = true;
-                }
-                launched = true;
-                initial_ball_c.transform.SetParent(null);
-                initial_ball_c.Unfreeze();
+                Launch();
             }
         }
 

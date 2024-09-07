@@ -5,6 +5,8 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class BatController : MonoBehaviour {
 
+    public bool receive_input = true;
+
     Rigidbody2D rb;
 
     float move_speed = 10f;  // bat move speed
@@ -22,6 +24,12 @@ public class BatController : MonoBehaviour {
         // return rb.ClosestPoint(rb.position + Vector2.up * transform.lossyScale.y * 10f).y;
     }
 
+    public void MovementInput(float targret_pos_x) {
+        targret_pos_x = Mathf.Clamp(targret_pos_x, -allowed_x, allowed_x);
+        float res_x = Mathf.MoveTowards(rb.position.x, targret_pos_x, move_speed * Time.fixedDeltaTime);
+        rb.MovePosition(new Vector2(res_x, rb.position.y));
+    }
+
     // Start is called before the first frame update
     void Start() {
         rb = GetComponent<Rigidbody2D>();
@@ -35,6 +43,9 @@ public class BatController : MonoBehaviour {
     }
 
     void FixedUpdate() {
+        if (!receive_input)
+            return;
+
         // XXX axis?
         if (Input.mousePosition != last_mouse_position) {
             mouse_controlled = true;
@@ -43,20 +54,16 @@ public class BatController : MonoBehaviour {
 
         if (Input.GetKey(KeyCode.LeftArrow)) {
             mouse_controlled = false;
-            if (rb.position.x > -allowed_x)
-                rb.MovePosition(rb.position + new Vector2(-move_speed * Time.fixedDeltaTime, 0f));
+            MovementInput(-allowed_x);
         }
         if (Input.GetKey(KeyCode.RightArrow)) {
             mouse_controlled = false;
-            if (rb.position.x < allowed_x)
-                rb.MovePosition(rb.position + new Vector2(move_speed * Time.fixedDeltaTime, 0f));
+            MovementInput(allowed_x);
         }
 
         if (mouse_controlled) {
             float target_pos_x = (last_mouse_position.x - Display.main.renderingWidth / 2) / (Display.main.renderingWidth / 2) * allowed_x;  // XXX or native?
-            // XXX limit movement?
-            float limited_pos_x = Mathf.Clamp(target_pos_x, -allowed_x, allowed_x);
-            rb.MovePosition(new Vector2(Mathf.MoveTowards(rb.position.x, limited_pos_x, move_speed * Time.fixedDeltaTime), rb.position.y));
+            MovementInput(target_pos_x);
         }
     }
 
