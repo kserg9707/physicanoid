@@ -8,7 +8,7 @@ public class BallController : MonoBehaviour {
 
     Rigidbody2D rb;
 
-    public float speed = 10f;  // keep ball velocity magnitude equal to this
+    float speed = 10f;  // keep ball velocity magnitude equal to this
     public float min_vertical_speed_mult = 0.125f;  // fraction of speed that is minimal vertical speed
     float vertical_speed_min { get { return speed * min_vertical_speed_mult; } }
 
@@ -34,7 +34,11 @@ public class BallController : MonoBehaviour {
     void Start() {
         rb = GetComponent<Rigidbody2D>();
 
-        rb.mass = FindObjectOfType<GlobalGameSettings>().ball_base_mass;  // XXX ?
+        LevelController lc = FindObjectOfType<LevelController>();
+        speed = lc.LevelBallSpeed;
+
+        GlobalGameSettings ggc = FindObjectOfType<GlobalGameSettings>();
+        rb.mass = ggc.ball_base_mass;
         ResetVelocity();
     }
 

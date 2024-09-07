@@ -7,7 +7,7 @@ public class BatController : MonoBehaviour {
 
     Rigidbody2D rb;
 
-    public float move_speed = 10f;  // bat move speed
+    float move_speed = 10f;  // bat move speed
     float allowed_x = 0;
 
     bool mouse_controlled = false;  // whether mouse or keyboard was used last
@@ -25,7 +25,12 @@ public class BatController : MonoBehaviour {
     // Start is called before the first frame update
     void Start() {
         rb = GetComponent<Rigidbody2D>();
-        allowed_x = FindObjectOfType<LevelController>().GetBatAllowedRange();
+
+        // GlobalGameSettings ggc = FindObjectOfType<GlobalGameSettings>();
+        LevelController lc = FindObjectOfType<LevelController>();
+        move_speed = lc.LevelBallSpeed;
+
+        allowed_x = lc.GetBatAllowedRange();
         last_mouse_position = Input.mousePosition;
     }
 

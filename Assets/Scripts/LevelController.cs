@@ -16,6 +16,7 @@ public class LevelController : MonoBehaviour {
 
     // level config
     public float field_width = 18f;
+    public float default_ball_speed = 15f;
     public bool physics_enabled = false;  // is physics enabled on level
     public float physics_enable_delay = 7f;  // seconds before physics enabling
     public float physics_enable_effect_delay = 6f;  // also from level start
@@ -26,6 +27,8 @@ public class LevelController : MonoBehaviour {
     public AudioSource sound_lose;
 
     public int fall_score_lost = 3;  // score lost at ball fall
+
+    public float LevelBallSpeed { get { return (physics_enabled) ? default_ball_speed * 0.7f : default_ball_speed; } }
 
     GlobalGameSettings ggc;
     UIController ui_c;
