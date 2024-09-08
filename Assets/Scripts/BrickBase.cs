@@ -13,6 +13,9 @@ public class BrickBase : MonoBehaviour {
     public float mass_multiplier = 1f;  // mass read from GlobalGameSettings and set at start
 
     public int hits_left = 1;  // hits until destrucion
+    private int initial_hits = 1;
+    private Vector2 initial_pos;
+    private float initial_rot;
     public int score = 1;  // score on destruction
     public float destroy_explosion_force = 10f;  // apply force to other bricks on destruction (ignore mass)
     public float destroy_explosion_raduis = 3f;  // radius of force appliance
@@ -26,6 +29,9 @@ public class BrickBase : MonoBehaviour {
         sound_ball_hit = GetComponent<AudioSource>();
 
         ApplyColor();
+        initial_hits = hits_left;
+        initial_pos = rb.position;
+        initial_rot = rb.rotation;
     }
 
     // Update is called once per frame
@@ -55,18 +61,31 @@ public class BrickBase : MonoBehaviour {
         }
     }
 
+    void Break() {
+        // ball hit sound
+        if (sound_ball_hit != null)
+            sound_ball_hit.Play();
+        // reduce health
+        if ((--hits_left) == 0) {
+            // explode and deactivate mesh and collider (via child to keep sound playing)
+            Explode();
+            GetComponentInChildren<Collider2D>().gameObject.SetActive(false); //Destroy(gameObject);
+            lc.BrickDestroyCallback(score);
+        }
+    }
+
+    public void Restore() {
+        transform.position = initial_pos;
+        transform.rotation = Quaternion.identity;
+        rb.position = initial_pos;
+        rb.rotation = initial_rot;
+        hits_left = initial_hits;
+        GetComponentInChildren<Collider2D>(true).gameObject.SetActive(true);
+    }
+
     void OnCollisionEnter2D(Collision2D other) {
         if (other.gameObject.CompareTag("Ball")) {
-            // ball hit sound
-            if (sound_ball_hit != null)
-                sound_ball_hit.Play();
-            // reduce health
-            if ((--hits_left) == 0) {
-                // explode and deactivate mesh and collider (via child to keep sound playing)
-                Explode();
-                GetComponentInChildren<Collider2D>().gameObject.SetActive(false); //Destroy(gameObject);
-                lc.BrickDestroyCallback(score);
-            }
+            Break();
         } else if (other.gameObject.CompareTag("Brick")) {
             // bricks hit sound
             if (sound_brick_hit != null)

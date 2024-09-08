@@ -15,8 +15,11 @@ public class LevelController : MonoBehaviour {
     bool level_win = false;
     int player_lives = 3;  // initial player lives
     bool level_lose = false;
+    bool next_level_loading = false;
+    bool exiting = false;
 
     // level config
+    public bool is_menu = false;
     public float field_width = 18f;
     public float default_ball_speed = 15f;
     public bool physics_enabled = false;  // is physics enabled on level
@@ -119,11 +122,39 @@ public class LevelController : MonoBehaviour {
     void LevelWin() {
         if (!launched)
             return;
+        if (is_menu) {
+            bricks_left = bricks.Length;
+            ResetBall();
+            foreach (BrickBase b in bricks) {
+                if (!b.IsDestroyed())
+                    b.Restore();
+            }
+            return;
+        }
         level_win = true;
         launched = false;
         ui_c.SetStateMessage("Win");
         if (sound_win != null)
             sound_win.Play();
+        NextLevel(3f, true);
+    }
+
+    void NextLevel(float delay, bool next, bool to_menu = false) {
+        if (next_level_loading)
+            return;
+        next_level_loading = true;
+        StartCoroutine(NextLevelCoroutine(delay, next, to_menu));
+    }
+
+    IEnumerator NextLevelCoroutine(float delay, bool next, bool to_menu = false) {
+        if (to_menu)
+            GameFlowController.Instance.LoadMenuAsync();
+        else if (next)
+            GameFlowController.Instance.LoadNextLevelAsync();
+        else
+            GameFlowController.Instance.LoadLevelAsync();
+        yield return new WaitForSeconds(delay);
+        GameFlowController.Instance.WaitLoadLevelAsync();
     }
 
     // called on lose condition
@@ -135,10 +166,16 @@ public class LevelController : MonoBehaviour {
         ui_c.SetStateMessage("Lose");
         if (sound_lose != null)
             sound_lose.Play();
+        NextLevel(3f, false, true);
     }
 
     void ExitLevel() {
-        Application.Quit();
+        if (is_menu)
+            return;
+        if (!exiting) {
+            exiting = true;
+            NextLevel(0f, true);
+        }
     }
 
     // Start is called before the first frame update
@@ -244,12 +281,17 @@ public class LevelController : MonoBehaviour {
 
         //if (Input.GetKeyDown(KeyCode.Backspace)) {
         if (Keyboard.current.backspaceKey.isPressed) {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            NextLevel(0f, false);
         }
 
         //if (Input.GetKeyDown(KeyCode.Escape))
         if (Keyboard.current.escapeKey.isPressed) {
             ExitLevel();
+        }
+
+        if (GameFlowController.Instance.cheats && Keyboard.current.pKey.isPressed) {
+            bricks_left = 1;
+            BrickDestroyCallback(0);
         }
     }
 }
