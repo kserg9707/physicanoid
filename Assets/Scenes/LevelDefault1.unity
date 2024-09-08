@@ -5448,26 +5448,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: BoundingBoxPhysics
       objectReference: {fileID: 0}
-    - target: {fileID: 2099572027295985679, guid: 630e2adc7b0f71b4dad0bc62c29000bd,
-        type: 3}
-      propertyPath: m_LocalScale.y
-      value: 9.85
-      objectReference: {fileID: 0}
-    - target: {fileID: 2099572027295985679, guid: 630e2adc7b0f71b4dad0bc62c29000bd,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 3.775
-      objectReference: {fileID: 0}
-    - target: {fileID: 7977372218564938702, guid: 630e2adc7b0f71b4dad0bc62c29000bd,
-        type: 3}
-      propertyPath: m_LocalScale.y
-      value: 9.85
-      objectReference: {fileID: 0}
-    - target: {fileID: 7977372218564938702, guid: 630e2adc7b0f71b4dad0bc62c29000bd,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 3.775
-      objectReference: {fileID: 0}
     - target: {fileID: 9049776424768129671, guid: 630e2adc7b0f71b4dad0bc62c29000bd,
         type: 3}
       propertyPath: m_LocalPosition.x
