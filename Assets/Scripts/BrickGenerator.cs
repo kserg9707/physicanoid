@@ -18,6 +18,8 @@ public class BrickGenerator : MonoBehaviour {
     public bool clear_on_generate = false;
     public bool mark_to_clear = false;
     public bool mark_to_generate = false;
+    public List<Color> lines_colors = new List<Color>();  // from top
+    public bool repeat_colors = false;
 
     List<GameObject> GetAllBricks() {
         List<GameObject> res = new List<GameObject>();
@@ -40,9 +42,13 @@ public class BrickGenerator : MonoBehaviour {
             ClearBricks();
 
         Vector2 left_top = new Vector2(transform.position.x - brick_offset.x * (size.x / 2) + (1 - (size.x % 2)) * brick_offset.x * 0.5f, transform.position.y);
-        for (int x = 0; x < size.x; ++x) {
-            for (int y = 0; y < size.y; ++y) {
-                Instantiate(prefab, left_top + brick_offset * new Vector2(x, -y), Quaternion.identity, transform);
+        for (int y = 0; y < size.y; ++y) {
+            for (int x = 0; x < size.x; ++x) {
+                GameObject go = Instantiate(prefab, left_top + brick_offset * new Vector2(x, -y), Quaternion.identity, transform);
+                if (lines_colors.Count > 0 && (y < lines_colors.Count || repeat_colors)) {
+                    BrickBase br = go.GetComponent<BrickBase>();
+                    br.color = lines_colors[y % lines_colors.Count];
+                }
             }
         }
     }

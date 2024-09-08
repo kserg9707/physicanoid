@@ -141,6 +141,7 @@ public class LevelController : MonoBehaviour {
         ui_c.UpdateScoreCB(player_score);
         ui_c.SetLivesCount(player_lives);
         ui_c.ResetStateMessage();
+        ui_c.SetPhysicsTimer(physics_enabled, physics_enable_delay);
 
         initial_ball_c = FindObjectOfType<BallController>();
         bat_c = FindObjectOfType<BatController>();
@@ -160,11 +161,24 @@ public class LevelController : MonoBehaviour {
             effect_start_time = time;
         time -= effect_start_time;
 
-        yield return new WaitForSeconds(effect_start_time);
+        float time_passed = 0f;
+        while (time_passed < effect_start_time) {
+            yield return new WaitForEndOfFrame();
+            time_passed += Time.deltaTime;
+            ui_c.SetPhysicsTimer(physics_enabled, Mathf.Clamp(physics_enable_delay - time_passed, 0f, physics_enable_delay));
+        }
+
+        //yield return new WaitForSeconds(effect_start_time);
         if (bricks_unfreeze_effect != null)
             bricks_unfreeze_effect.Play();
 
-        yield return new WaitForSeconds(time);
+        while (time_passed < physics_enable_delay) {
+            yield return new WaitForEndOfFrame();
+            time_passed += Time.deltaTime;
+            ui_c.SetPhysicsTimer(physics_enabled, Mathf.Clamp(physics_enable_delay - time_passed, 0f, physics_enable_delay));
+        }
+
+        // yield return new WaitForSeconds(time);
         bricks_freezed = false;
         SetBricksFreezed(false);
         foreach (BrickBase b in bricks)

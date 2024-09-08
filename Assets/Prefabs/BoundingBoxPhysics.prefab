@@ -51,8 +51,8 @@ GameObject:
   - component: {fileID: 8934952308025368629}
   - component: {fileID: 6018488268879641054}
   m_Layer: 0
-  m_Name: BrickBottomBox (2)
-  m_TagString: Untagged
+  m_Name: LeftDeath
+  m_TagString: Border
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -81,14 +81,14 @@ BoxCollider2D:
   m_GameObject: {fileID: 2401211385263992983}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 6200000, guid: c080cb0f8238a1e448e545ae3a52274d, type: 2}
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_LayerOverridePriority: 10
+  m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
     m_Bits: 128
@@ -97,11 +97,11 @@ BoxCollider2D:
     m_Bits: 128
   m_ContactCaptureLayers:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 4294967295
   m_CallbackLayers:
     serializedVersion: 2
-    m_Bits: 128
-  m_IsTrigger: 0
+    m_Bits: 4294967295
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -255,8 +255,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3045996681786836353}
-  - component: {fileID: 7381918685077045688}
-  - component: {fileID: 6844068732728611411}
   - component: {fileID: 2919444228145740903}
   m_Layer: 0
   m_Name: BottomDeath
@@ -280,56 +278,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 9049776424768129671}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &7381918685077045688
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4058951046221994843}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &6844068732728611411
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4058951046221994843}
-  m_Enabled: 0
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!61 &2919444228145740903
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -682,8 +630,8 @@ GameObject:
   - component: {fileID: 2305821909971267466}
   - component: {fileID: 6428996994406798438}
   m_Layer: 0
-  m_Name: BrickBottomBox (1)
-  m_TagString: Untagged
+  m_Name: TopDeath
+  m_TagString: Border
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -712,14 +660,14 @@ BoxCollider2D:
   m_GameObject: {fileID: 5822977769029316291}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 6200000, guid: c080cb0f8238a1e448e545ae3a52274d, type: 2}
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_LayerOverridePriority: 10
+  m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
     m_Bits: 128
@@ -728,11 +676,11 @@ BoxCollider2D:
     m_Bits: 128
   m_ContactCaptureLayers:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 4294967295
   m_CallbackLayers:
     serializedVersion: 2
-    m_Bits: 128
-  m_IsTrigger: 0
+    m_Bits: 4294967295
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -888,8 +836,8 @@ GameObject:
   - component: {fileID: 3100151867392953541}
   - component: {fileID: 2992287494431160241}
   m_Layer: 0
-  m_Name: BrickBottomBox (3)
-  m_TagString: Untagged
+  m_Name: RightDeath
+  m_TagString: Border
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -918,14 +866,14 @@ BoxCollider2D:
   m_GameObject: {fileID: 8506532137519131156}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 6200000, guid: c080cb0f8238a1e448e545ae3a52274d, type: 2}
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_LayerOverridePriority: 10
+  m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
     m_Bits: 128
@@ -934,11 +882,11 @@ BoxCollider2D:
     m_Bits: 128
   m_ContactCaptureLayers:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 4294967295
   m_CallbackLayers:
     serializedVersion: 2
-    m_Bits: 128
-  m_IsTrigger: 0
+    m_Bits: 4294967295
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}

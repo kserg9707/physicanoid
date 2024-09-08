@@ -16,6 +16,7 @@ public class BrickBase : MonoBehaviour {
     public int score = 1;  // score on destruction
     public float destroy_explosion_force = 10f;  // apply force to other bricks on destruction (ignore mass)
     public float destroy_explosion_raduis = 3f;  // radius of force appliance
+    public Color color = Color.green;
 
     // Start is called before the first frame update
     void Start() {
@@ -23,11 +24,18 @@ public class BrickBase : MonoBehaviour {
         rb.mass = FindObjectOfType<GlobalGameSettings>().brick_base_mass * mass_multiplier;
         lc = FindObjectOfType<LevelController>();
         sound_ball_hit = GetComponent<AudioSource>();
+
+        ApplyColor();
     }
 
     // Update is called once per frame
     void Update() {
         
+    }
+
+    void ApplyColor() {
+        MeshRenderer mr = GetComponentInChildren<MeshRenderer>();
+        mr.material.color = color;
     }
 
     // apply force to nearest bricks

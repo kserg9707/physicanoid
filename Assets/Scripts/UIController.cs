@@ -11,6 +11,8 @@ public class UIController : MonoBehaviour
     TMP_Text w_text_lives;
     [SerializeField]
     TMP_Text w_text_state;
+    [SerializeField]
+    TMP_Text w_text_physics_timer;
 
     public void UpdateScoreCB(int score) {
         w_text_score.text = "Score: " + score.ToString();
@@ -18,6 +20,13 @@ public class UIController : MonoBehaviour
 
     public void SetLivesCount(int lives) {
         w_text_lives.text = "Lives: " + lives.ToString();
+    }
+
+    public void SetPhysicsTimer(bool show, float seconds_left) {
+        if (!show)
+            w_text_physics_timer.text = "";
+        else
+            w_text_physics_timer.text = seconds_left > 0 ? "Phase 2 starts in:\n" + seconds_left.ToString("F2").Replace(',', '.') : "Phase 2";
     }
 
     public void SetStateMessage(string message) {
