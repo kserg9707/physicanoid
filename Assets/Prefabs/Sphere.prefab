@@ -162,6 +162,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   min_vertical_speed_mult: 0.125
+  brick_force_field: 0
+  brick_force_field_force: 3
+  brick_force_field_radius: 3
   DEBUG_velocity: {x: 0, y: 0}
 --- !u!1 &8084438822487460257
 GameObject:

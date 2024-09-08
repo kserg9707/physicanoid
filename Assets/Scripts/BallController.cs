@@ -10,8 +10,15 @@ public class BallController : MonoBehaviour {
     Rigidbody2D rb;
 
     float speed = 10f;  // keep ball velocity magnitude equal to this
+    float cur_speed = 10f;  // keep ball velocity magnitude equal to this
+    bool use_accel = false;
+    float accel = 7f;  // keep ball velocity magnitude equal to this
     public float min_vertical_speed_mult = 0.125f;  // fraction of speed that is minimal vertical speed
     float vertical_speed_min { get { return speed * min_vertical_speed_mult; } }
+
+    public bool brick_force_field = false;
+    public float brick_force_field_force = 3f;
+    public float brick_force_field_radius = 3f;
 
     bool freezed = true;  // is ball movement suspended (disables rigidbody simulation)
     Vector2 freezed_vel;  // velocity before freeze
@@ -28,7 +35,25 @@ public class BallController : MonoBehaviour {
 
     // Set reigidbody velocity to (1,1) * speed
     public void ResetVelocity() {
-        rb.velocity = new Vector2(1f, 1f) * speed;  // XXX good for initial ball but not spawned during play
+        cur_speed = speed;
+        rb.velocity = new Vector2(1f, 1f) * cur_speed;  // XXX good for initial ball but not spawned during play
+    }
+
+    // copied from BrickBase
+    void Explode() {
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(rb.position, 3f);
+        foreach (Collider2D hit in colliders) {
+            if (!hit.CompareTag("Brick"))  // XXX replace with layer mask?
+                continue;
+            Rigidbody2D rbo = hit.GetComponentInParent<Rigidbody2D>();
+
+            if (rbo != null) {
+                Vector2 force_vec = rbo.position - rb.position;
+                float koef = Mathf.Clamp01((brick_force_field_radius * brick_force_field_radius - force_vec.sqrMagnitude) / (brick_force_field_radius * brick_force_field_radius));
+                rbo.AddForce(force_vec.normalized * brick_force_field_force * koef, ForceMode2D.Impulse);
+                // rbo.AddForceAtPosition((rbo.position - rb.position).normalized * destroy_explosion_force, rb.position, ForceMode2D.Impulse);
+            }
+        }
     }
 
     // Start is called before the first frame update
@@ -45,7 +70,8 @@ public class BallController : MonoBehaviour {
 
     void FixedUpdate() {
         KeepSpeed();
-        Debug.Log("fixed: last vel: " + last_vel.ToString());
+        if (brick_force_field)
+            Explode();
     }
 
     // Update is called once per frame
@@ -56,10 +82,10 @@ public class BallController : MonoBehaviour {
     void OnTriggerEnter2D(Collider2D other) {
         if (!other.CompareTag("Border"))
             return;
-        Debug.Log("trigger overlap with " + other.gameObject.name);
+        // Debug.Log("trigger overlap with " + other.gameObject.name);
         // XXX temp
 
-        FindObjectOfType<LevelController>().BallFallCallback();
+        lc.BallFallCallback();
     }
 
     void OnTriggerStay2D(Collider2D other) {
@@ -110,9 +136,13 @@ public class BallController : MonoBehaviour {
     // Update rigidbody velocity to keep specified magnitude
     void KeepSpeed() {
         if (!freezed) {
-            rb.velocity = rb.velocity.normalized * speed;
+            if (use_accel)
+                cur_speed = Mathf.MoveTowards(rb.velocity.magnitude, speed, accel * Time.fixedDeltaTime);
+            // else
+            //     cur_speed = speed;
+            rb.velocity = rb.velocity.normalized * cur_speed;
             if (Mathf.Abs(rb.velocity.y) < vertical_speed_min) {
-                rb.velocity = new Vector2(rb.velocity.x, Mathf.Sign(rb.velocity.normalized.y) * vertical_speed_min).normalized * speed;
+                rb.velocity = new Vector2(rb.velocity.x, Mathf.Sign(rb.velocity.normalized.y) * vertical_speed_min).normalized * cur_speed;
             }
             last_vel = rb.velocity;
         }
@@ -129,7 +159,7 @@ public class BallController : MonoBehaviour {
     // disable collision and rigidbody simulation and remember velocity
     public void Freeze() {
         freezed = true;
-        freezed_vel = rb.velocity;
+        freezed_vel = rb.velocity.normalized * cur_speed;
         rb.velocity = Vector3.zero;
         rb.simulated = false;
         GetComponent<Collider2D>().enabled = false;
