@@ -44,8 +44,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0ab5f2bc9f8a82409ae334131eda118, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cheats: 1
+  dummy: 0
+  cheats: 0
   menu_scene_idx: 1
   level_sets:
+  - levels: 020000000300000004000000
   - levels: 0200000003000000
-  - levels: 0200000003000000
+  bat_mouse_used: 0

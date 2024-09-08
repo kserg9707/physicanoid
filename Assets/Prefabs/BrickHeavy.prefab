@@ -78,9 +78,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sound_brick_hit: {fileID: 8685617913861558803}
   explode_effect: {fileID: 8505485123233394111}
-  mass_multiplier: 3
+  mass_multiplier: 10
   hits_left: 1
-  score: 1
+  score: 2
   destroy_explosion_force: 10
   destroy_explosion_raduis: 3
   color: {r: 1, g: 1, b: 1, a: 1}
