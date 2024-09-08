@@ -15,7 +15,7 @@ public class BatController : MonoBehaviour {
     float allowed_x = 0;
 
     bool mouse_controlled = false;  // whether mouse or keyboard was used last
-    Vector3 last_mouse_position;
+    Vector2 last_mouse_position;
 
     public AudioSource sound_ball_hit;
 
@@ -49,10 +49,10 @@ public class BatController : MonoBehaviour {
             return;
 
         // XXX axis?
-        //if (Input.mousePosition != last_mouse_position) {
-        //    mouse_controlled = true;
-        //    last_mouse_position = Input.mousePosition;
-        //}
+        if (Mouse.current.position.value != last_mouse_position) {
+            mouse_controlled = true;
+            last_mouse_position = Input.mousePosition;
+        }
 
         //if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A)) {
         //if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A)) {

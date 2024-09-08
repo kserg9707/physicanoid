@@ -237,7 +237,7 @@ public class LevelController : MonoBehaviour {
     void Update() {
         if (!launched && !level_lose && !level_win) {
             //if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)) {
-            if (Keyboard.current.spaceKey.isPressed) {
+            if (Keyboard.current.spaceKey.isPressed | Mouse.current.leftButton.isPressed) {
                 Launch();
             }
         }
