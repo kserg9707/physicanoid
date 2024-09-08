@@ -17,6 +17,7 @@ public class GameFlowController : MonoBehaviour
 {
     public static GameFlowController Instance { get; private set; }
 
+    public bool dummy = true;
     public bool cheats = false;
     bool is_menu = true;
     public int menu_scene_idx;
@@ -26,8 +27,26 @@ public class GameFlowController : MonoBehaviour
 
     AsyncOperation async_op;
 
+    int stored_score = 0;
+    int stored_lives = 3;
+    public void StorePlayerState(int score, int lives) { stored_score = score; stored_lives = lives; }
+    public void LoadPlayerState(out int score, out int lives) { score = stored_score; lives = stored_lives; stored_score = 0; stored_lives = 3; }  // XXX
+    public bool bat_mouse_used = false;
+
     public int GetCurrentLevelBuildIdx() {
         return level_sets[cur_level_set_idx][cur_level_idx];
+    }
+
+    public int GetCurrentLevelIdx() {
+        return cur_level_idx;
+    }
+
+    public int GetLevelsCount() {
+        return level_sets[cur_level_set_idx].Length;
+    }
+
+    public bool IsLastLevel() {
+        return cur_level_idx + 1 >= level_sets[cur_level_set_idx].Length;
     }
 
     private Scene GetCurScene() {
@@ -131,6 +150,8 @@ public class GameFlowController : MonoBehaviour
     void Start () {
     	DontDestroyOnLoad(gameObject);
 
+        if (dummy)
+            return;
         is_menu = true;
         LoadNextLevel();
     }

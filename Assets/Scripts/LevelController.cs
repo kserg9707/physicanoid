@@ -17,6 +17,7 @@ public class LevelController : MonoBehaviour {
     bool level_lose = false;
     bool next_level_loading = false;
     bool exiting = false;
+    bool break_coroutines = false;
 
     // level config
     public bool is_menu = false;
@@ -118,27 +119,6 @@ public class LevelController : MonoBehaviour {
         }
     }
 
-    // called on win condition
-    void LevelWin() {
-        if (!launched)
-            return;
-        if (is_menu) {
-            bricks_left = bricks.Length;
-            ResetBall();
-            foreach (BrickBase b in bricks) {
-                if (!b.IsDestroyed())
-                    b.Restore();
-            }
-            return;
-        }
-        level_win = true;
-        launched = false;
-        ui_c.SetStateMessage("Win");
-        if (sound_win != null)
-            sound_win.Play();
-        NextLevel(3f, true);
-    }
-
     void NextLevel(float delay, bool next, bool to_menu = false) {
         if (next_level_loading)
             return;
@@ -157,16 +137,45 @@ public class LevelController : MonoBehaviour {
         GameFlowController.Instance.WaitLoadLevelAsync();
     }
 
+    // called on win condition
+    void LevelWin() {
+        if (!launched)
+            return;
+        if (is_menu) {
+            bricks_left = bricks.Length;
+            ResetBall();
+            foreach (BrickBase b in bricks) {
+                if (!b.IsDestroyed())
+                    b.Restore();
+            }
+            return;
+        }
+        level_win = true;
+        launched = false;
+        ui_c.SetStateMessage("Win!\nLoading next level...");
+        if (sound_win != null)
+            sound_win.Play();
+        break_coroutines = true;
+        if (GameFlowController.Instance.IsLastLevel()) {
+            ui_c.SetStateMessage("Win!\nGame complete! Score: " + player_score.ToString() + "\nPress [ESC] to open menu");
+            // NextLevel(5f, true);
+        } else {
+            GameFlowController.Instance.StorePlayerState(player_score, player_lives);
+            NextLevel(3f, true);
+        }
+    }
+
     // called on lose condition
     void LevelLose() {
         if (!launched)
             return;
         level_lose = true;
         launched = false;
-        ui_c.SetStateMessage("Lose");
+        ui_c.SetStateMessage("You lose\nPress [Baskspace] to restart level\nPress [ESC] to open menu");
         if (sound_lose != null)
             sound_lose.Play();
-        NextLevel(3f, false, true);
+        break_coroutines = true;
+        // NextLevel(3f, false, true);
     }
 
     void ExitLevel() {
@@ -180,6 +189,8 @@ public class LevelController : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start() {
+        GameFlowController.Instance.LoadPlayerState(out player_score, out player_lives);
+
         ggc = FindObjectOfType<GlobalGameSettings>();
         ui_c = FindObjectOfType<UIController>();
         ui_c.UpdateScoreCB(player_score);
@@ -205,6 +216,8 @@ public class LevelController : MonoBehaviour {
 
         float time_passed = 0f;
         while (time_passed < effect_start_time) {
+            if (break_coroutines)
+                yield break;
             yield return new WaitForEndOfFrame();
             time_passed += Time.deltaTime;
             ui_c.SetPhysicsTimer(physics_enabled, Mathf.Clamp(physics_enable_delay - time_passed, 0f, physics_enable_delay));
@@ -215,6 +228,8 @@ public class LevelController : MonoBehaviour {
             bricks_unfreeze_effect.Play();
 
         while (time_passed < physics_enable_delay) {
+            if (break_coroutines)
+                yield break;
             yield return new WaitForEndOfFrame();
             time_passed += Time.deltaTime;
             ui_c.SetPhysicsTimer(physics_enabled, Mathf.Clamp(physics_enable_delay - time_passed, 0f, physics_enable_delay));
@@ -241,6 +256,8 @@ public class LevelController : MonoBehaviour {
 
         float time_passed = 0f;
         while (time_passed < effect_start_time) {
+            if (break_coroutines)
+                yield break;
             yield return new WaitForEndOfFrame();
             time_passed += Time.deltaTime;
             ui_c.SetBallForceTimer(ball_force_enabled, Mathf.Clamp(ball_force_enable_delay - time_passed, 0f, ball_force_enable_delay));
@@ -250,6 +267,8 @@ public class LevelController : MonoBehaviour {
         initial_ball_c.ForceEnableEffectPlay();
 
         while (time_passed < ball_force_enable_delay) {
+            if (break_coroutines)
+                yield break;
             yield return new WaitForEndOfFrame();
             time_passed += Time.deltaTime;
             ui_c.SetBallForceTimer(ball_force_enabled, Mathf.Clamp(ball_force_enable_delay - time_passed, 0f, ball_force_enable_delay));

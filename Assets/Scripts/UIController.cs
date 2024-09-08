@@ -6,6 +6,8 @@ using UnityEngine;
 public class UIController : MonoBehaviour
 {
     [SerializeField]
+    TMP_Text w_text_level;
+    [SerializeField]
     TMP_Text w_text_score;
     [SerializeField]
     TMP_Text w_text_lives;
@@ -46,7 +48,10 @@ public class UIController : MonoBehaviour
 
     // Start is called before the first frame update
     void Start() {
-        
+        w_text_level.text = "Level no: " +
+                (GameFlowController.Instance.GetCurrentLevelIdx() + 1).ToString() +
+                " of " +
+                GameFlowController.Instance.GetLevelsCount().ToString();
     }
 
     // Update is called once per frame

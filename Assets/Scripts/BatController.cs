@@ -34,6 +34,7 @@ public class BatController : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start() {
+        mouse_controlled = GameFlowController.Instance.bat_mouse_used;
         rb = GetComponent<Rigidbody2D>();
 
         // GlobalGameSettings ggc = FindObjectOfType<GlobalGameSettings>();
@@ -51,7 +52,7 @@ public class BatController : MonoBehaviour {
         // XXX axis?
         if (Mouse.current.position.value != last_mouse_position) {
             mouse_controlled = true;
-            last_mouse_position = Input.mousePosition;
+            last_mouse_position = Mouse.current.position.value; // Input.mousePosition;
         }
 
         //if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A)) {
@@ -70,6 +71,7 @@ public class BatController : MonoBehaviour {
             float target_pos_x = (last_mouse_position.x - Display.main.renderingWidth / 2) / (Display.main.renderingWidth / 2) * allowed_x;  // XXX or native?
             MovementInput(target_pos_x);
         }
+        GameFlowController.Instance.bat_mouse_used = mouse_controlled;
     }
 
     void OnCollisionEnter2D(Collision2D other) {

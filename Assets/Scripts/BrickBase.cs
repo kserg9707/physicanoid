@@ -9,6 +9,8 @@ public class BrickBase : MonoBehaviour {
     AudioSource sound_ball_hit;
     [SerializeField]
     AudioSource sound_brick_hit;
+    [SerializeField]
+    ParticleSystem explode_effect;
 
     public float mass_multiplier = 1f;  // mass read from GlobalGameSettings and set at start
 
@@ -46,6 +48,8 @@ public class BrickBase : MonoBehaviour {
 
     // apply force to nearest bricks
     void Explode() {
+        if (explode_effect != null)
+            explode_effect.Play();
         Collider2D[] colliders = Physics2D.OverlapCircleAll(rb.position, destroy_explosion_raduis);
         foreach (Collider2D hit in colliders) {
             if (!hit.CompareTag("Brick"))  // XXX replace with layer mask?
@@ -68,7 +72,8 @@ public class BrickBase : MonoBehaviour {
         // reduce health
         if ((--hits_left) == 0) {
             // explode and deactivate mesh and collider (via child to keep sound playing)
-            Explode();
+            if (lc.PhysicsEnabled)
+                Explode();
             GetComponentInChildren<Collider2D>().gameObject.SetActive(false); //Destroy(gameObject);
             lc.BrickDestroyCallback(score);
         }
