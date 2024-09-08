@@ -5090,6 +5090,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b43910f5562ce6d45ad08722630305b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 2951167841532832593}
   min_vertical_speed_mult: 0.175
   brick_force_field: 0
   brick_force_field_force: 2.25
@@ -5126,7 +5127,7 @@ Transform:
   m_GameObject: {fileID: 4691567662471266037}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.6}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

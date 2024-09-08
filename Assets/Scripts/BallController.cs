@@ -7,7 +7,7 @@ using UnityEngine;
 public class BallController : MonoBehaviour {
 
     LevelController lc;
-    Rigidbody2D rb;
+    public Rigidbody2D rb;
 
     float speed = 10f;  // keep ball velocity magnitude equal to this
     float cur_speed = 10f;  // keep ball velocity magnitude equal to this
@@ -33,7 +33,7 @@ public class BallController : MonoBehaviour {
 
     // Just get radius of ball collider
     public float GetColliderRadius() {
-        CircleCollider2D col = rb.GetComponent<CircleCollider2D>();
+        CircleCollider2D col = GetComponent<CircleCollider2D>();
         return col.radius * col.transform.lossyScale.y;
     }
 
@@ -82,7 +82,8 @@ public class BallController : MonoBehaviour {
     // Start is called before the first frame update
     void Start() {
         lc = FindObjectOfType<LevelController>();
-        rb = GetComponent<Rigidbody2D>();
+        if (rb == null)
+            rb = GetComponent<Rigidbody2D>();
 
         speed = lc.LevelBallSpeed;
 

@@ -4,6 +4,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.SocialPlatforms.Impl;
+using UnityEngine.InputSystem;
 
 public class LevelController : MonoBehaviour {
 
@@ -50,6 +51,8 @@ public class LevelController : MonoBehaviour {
     }
 
     public float GetBatAllowedRange() {
+        if (initial_ball_c == null)
+            initial_ball_c = FindObjectOfType<BallController>();
         return field_width * 0.5f - initial_ball_c.GetColliderRadius();;
     }
 
@@ -233,16 +236,20 @@ public class LevelController : MonoBehaviour {
     // Update is called once per frame
     void Update() {
         if (!launched && !level_lose && !level_win) {
-            if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)) {
+            //if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)) {
+            if (Keyboard.current.spaceKey.isPressed) {
                 Launch();
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.Backspace)) {
+        //if (Input.GetKeyDown(KeyCode.Backspace)) {
+        if (Keyboard.current.backspaceKey.isPressed) {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
 
-        if (Input.GetKeyDown(KeyCode.Escape))
+        //if (Input.GetKeyDown(KeyCode.Escape))
+        if (Keyboard.current.escapeKey.isPressed) {
             ExitLevel();
+        }
     }
 }

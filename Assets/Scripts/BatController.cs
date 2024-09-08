@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class BatController : MonoBehaviour {
 
     public bool receive_input = true;
+    public PlayerInput input;
 
     Rigidbody2D rb;
 
@@ -39,7 +41,7 @@ public class BatController : MonoBehaviour {
         move_speed = lc.LevelBallSpeed;
 
         allowed_x = lc.GetBatAllowedRange();
-        last_mouse_position = Input.mousePosition;
+        //last_mouse_position = Input.mousePosition;
     }
 
     void FixedUpdate() {
@@ -47,16 +49,19 @@ public class BatController : MonoBehaviour {
             return;
 
         // XXX axis?
-        if (Input.mousePosition != last_mouse_position) {
-            mouse_controlled = true;
-            last_mouse_position = Input.mousePosition;
-        }
+        //if (Input.mousePosition != last_mouse_position) {
+        //    mouse_controlled = true;
+        //    last_mouse_position = Input.mousePosition;
+        //}
 
-        if (Input.GetKey(KeyCode.LeftArrow)) {
+        //if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A)) {
+        //if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A)) {
+        if (Keyboard.current.leftArrowKey.isPressed) {
             mouse_controlled = false;
             MovementInput(-allowed_x);
         }
-        if (Input.GetKey(KeyCode.RightArrow)) {
+        //if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D)) {
+        if (Keyboard.current.rightArrowKey.isPressed) {
             mouse_controlled = false;
             MovementInput(allowed_x);
         }
