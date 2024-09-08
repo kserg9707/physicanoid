@@ -20,7 +20,7 @@ public class LevelController : MonoBehaviour {
     public float default_ball_speed = 15f;
     public bool physics_enabled = false;  // is physics enabled on level
     public float physics_enable_delay = 7f;  // seconds before physics enabling
-    public float physics_enable_effect_delay = 6f;  // also from level start
+    public float physics_enable_effect_len = 1f;  // also from level start
 
     public ParticleSystem bricks_unfreeze_effect;
     public AudioSource sound_ball_fall;
@@ -154,12 +154,13 @@ public class LevelController : MonoBehaviour {
     }
 
     // coroutine to enable physics  // XXX suspend while not launched?
-    IEnumerator UnfreezeBricksAfterTime(float time, float effect_start_time) {
-        if (effect_start_time < 0)
-            effect_start_time = 0;
-        if (effect_start_time > time)
-            effect_start_time = time;
-        time -= effect_start_time;
+    IEnumerator UnfreezeBricksAfterTime(float time, float effect_len) {
+        if (effect_len < 0)
+            effect_len = 0;
+        if (effect_len > time)
+            effect_len = time;
+        // time -= effect_start_time;
+        float effect_start_time = time - effect_len;
 
         float time_passed = 0f;
         while (time_passed < effect_start_time) {
@@ -190,7 +191,7 @@ public class LevelController : MonoBehaviour {
     public void Launch() {
         if (!started) {
             if (physics_enabled)
-                StartCoroutine(UnfreezeBricksAfterTime(physics_enable_delay, physics_enable_effect_delay));  // XXX params
+                StartCoroutine(UnfreezeBricksAfterTime(physics_enable_delay, physics_enable_effect_len));  // XXX params
             started = true;
         }
         launched = true;
