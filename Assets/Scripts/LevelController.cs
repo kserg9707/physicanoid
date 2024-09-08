@@ -21,6 +21,10 @@ public class LevelController : MonoBehaviour {
     public bool physics_enabled = false;  // is physics enabled on level
     public float physics_enable_delay = 7f;  // seconds before physics enabling
     public float physics_enable_effect_len = 1f;  // also from level start
+    public bool ball_force_enabled = false;
+    public float ball_force_enable_delay = 15f;  // seconds before ball force enabling, AFTER physics!
+    public float ball_force_enable_effect_len { get { return initial_ball_c.ForceEnableEffectLen; }}
+    // public float physics_enable_effect_len = 1f;  // also from level start
 
     public ParticleSystem bricks_unfreeze_effect;
     public AudioSource sound_ball_fall;
@@ -153,12 +157,9 @@ public class LevelController : MonoBehaviour {
         SetBricksFreezed(true);
     }
 
-    // coroutine to enable physics  // XXX suspend while not launched?
+    // coroutine to enable physics  // suspend while not launched? no
     IEnumerator UnfreezeBricksAfterTime(float time, float effect_len) {
-        if (effect_len < 0)
-            effect_len = 0;
-        if (effect_len > time)
-            effect_len = time;
+        effect_len = Mathf.Clamp(effect_len, 0f, time);
         // time -= effect_start_time;
         float effect_start_time = time - effect_len;
 
@@ -186,6 +187,36 @@ public class LevelController : MonoBehaviour {
             if (!b.IsDestroyed()) {
                 b.GetComponent<Rigidbody2D>().AddForce(Random.insideUnitSphere * ggc.brick_base_mass * 10f);
             }
+
+        if (ball_force_enabled) {
+            StartCoroutine(BallForceAfterTime(ball_force_enable_delay, ball_force_enable_effect_len));
+        }
+    }
+
+    // coroutine to enable ball force
+    IEnumerator BallForceAfterTime(float time, float effect_len) {
+        effect_len = Mathf.Clamp(effect_len, 0f, time);
+        // time -= effect_start_time;
+        float effect_start_time = time - effect_len;
+
+        float time_passed = 0f;
+        while (time_passed < effect_start_time) {
+            yield return new WaitForEndOfFrame();
+            time_passed += Time.deltaTime;
+            ui_c.SetBallForceTimer(ball_force_enabled, Mathf.Clamp(ball_force_enable_delay - time_passed, 0f, ball_force_enable_delay));
+        }
+
+        //yield return new WaitForSeconds(effect_start_time);
+        initial_ball_c.ForceEnableEffectPlay();
+
+        while (time_passed < ball_force_enable_delay) {
+            yield return new WaitForEndOfFrame();
+            time_passed += Time.deltaTime;
+            ui_c.SetBallForceTimer(ball_force_enabled, Mathf.Clamp(ball_force_enable_delay - time_passed, 0f, ball_force_enable_delay));
+        }
+
+        // yield return new WaitForSeconds(time);
+        initial_ball_c.ForceEnable();
     }
 
     public void Launch() {

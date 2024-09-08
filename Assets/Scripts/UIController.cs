@@ -29,6 +29,13 @@ public class UIController : MonoBehaviour
             w_text_physics_timer.text = seconds_left > 0 ? "Phase 2 starts in:\n" + seconds_left.ToString("F2").Replace(',', '.') : "Phase 2";
     }
 
+    public void SetBallForceTimer(bool show, float seconds_left) {
+        if (!show)
+            w_text_physics_timer.text = "";
+        else
+            w_text_physics_timer.text = seconds_left > 0 ? "Extra phase starts in:\n" + seconds_left.ToString("F2").Replace(',', '.') : "Extra phase";
+    }
+
     public void SetStateMessage(string message) {
         w_text_state.text = message;
     }

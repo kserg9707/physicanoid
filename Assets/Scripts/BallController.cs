@@ -17,8 +17,12 @@ public class BallController : MonoBehaviour {
     float vertical_speed_min { get { return speed * min_vertical_speed_mult; } }
 
     public bool brick_force_field = false;
-    public float brick_force_field_force = 3f;
-    public float brick_force_field_radius = 3f;
+    public float brick_force_field_force = 2.25f;
+    public float brick_force_field_radius = 2.25f;
+    public ParticleSystem force_enable_effect;
+    public float force_enable_effect_len = 0.5f;
+    public float ForceEnableEffectLen { get { return force_enable_effect_len; } }
+    public ParticleSystem force_effect;
 
     bool freezed = true;  // is ball movement suspended (disables rigidbody simulation)
     Vector2 freezed_vel;  // velocity before freeze
@@ -37,6 +41,25 @@ public class BallController : MonoBehaviour {
     public void ResetVelocity() {
         cur_speed = speed;
         rb.velocity = new Vector2(1f, 1f) * cur_speed;  // XXX good for initial ball but not spawned during play
+    }
+
+    public void ForceEnableEffectPlay() {
+        if (force_enable_effect != null) {
+            force_enable_effect.Play();
+            AudioSource aus = force_enable_effect.GetComponent<AudioSource>();
+            if (aus != null)
+                aus.Play();
+        }
+    }
+
+    public void ForceEnable() {
+        brick_force_field = true;
+        if (force_effect != null) {
+            force_effect.Play();
+            AudioSource aus = force_effect.GetComponent<AudioSource>();
+            if (aus != null)
+                aus.Play();
+        }
     }
 
     // copied from BrickBase
@@ -70,7 +93,7 @@ public class BallController : MonoBehaviour {
 
     void FixedUpdate() {
         KeepSpeed();
-        if (brick_force_field)
+        if (!freezed && brick_force_field)
             Explode();
     }
 
@@ -163,6 +186,13 @@ public class BallController : MonoBehaviour {
         rb.velocity = Vector3.zero;
         rb.simulated = false;
         GetComponent<Collider2D>().enabled = false;
+        if (force_effect != null) {
+            force_effect.Stop();
+            force_effect.SetParticles(new ParticleSystem.Particle[0]);
+            AudioSource aus = force_effect.GetComponent<AudioSource>();
+            if (aus != null)
+                aus.Stop();
+        }
     }
 
     // enable collision and rigidbody simulation and restore velocity
@@ -171,5 +201,11 @@ public class BallController : MonoBehaviour {
         rb.velocity = freezed_vel;
         rb.simulated = true;
         GetComponent<Collider2D>().enabled = true;
+        if (brick_force_field && force_effect != null) {
+            force_effect.Play();
+            AudioSource aus = force_effect.GetComponent<AudioSource>();
+            if (aus != null)
+                aus.Play();
+        }
     }
 }
