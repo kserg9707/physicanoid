@@ -2,7 +2,7 @@
 
 Арканоид на движке Unity версии 2022.3.20f1, написанный в рамках хакатона [Синеус 2024](https://sineys.ru).
 
-Для запуска необходимо загрузить архив [physicanoid.zip](releases/latest/physicanoid.zip), распаковать и запустить файл `physicanoid.exe`.
+Для запуска необходимо загрузить архив [physicanoid.zip](physicanoid.zip), распаковать и запустить файл `physicanoid.exe`.
 
 ## Описание
 
