@@ -1,9 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class MenuController : MonoBehaviour
 {
+    [SerializeField]
+    TMP_Text version_text;
 
     public void BtnStart() {
         if (!GameFlowController.Instance.StartLevelSet(0)) {
@@ -24,6 +27,8 @@ public class MenuController : MonoBehaviour
     // Start is called before the first frame update
     void Start() {
         Cursor.visible = true;
+        if (version_text != null)
+            version_text.text = "v" + Application.version;
     }
 
     // Update is called once per frame

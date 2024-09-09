@@ -163,6 +163,7 @@ public class LevelController : MonoBehaviour {
         break_coroutines = true;
         if (GameFlowController.Instance.IsLastLevel()) {
             ui_c.SetStateMessage("Win!\nGame complete! Score: " + player_score.ToString() + "\nPress [ESC] to open menu");
+            ui_c.SetWinLoseButtonsVisible(true);
             // NextLevel(5f, true);
         } else {
             GameFlowController.Instance.StorePlayerState(player_score, player_lives);
@@ -178,13 +179,14 @@ public class LevelController : MonoBehaviour {
         level_lose = true;
         launched = false;
         ui_c.SetStateMessage("You lose :(   Score: " + player_score.ToString() + "\nPress [Baskspace] to restart level\nPress [ESC] to open menu");
+        ui_c.SetWinLoseButtonsVisible(true);
         if (sound_lose != null)
             sound_lose.Play();
         break_coroutines = true;
         // NextLevel(3f, false, true);
     }
 
-    void ExitLevel() {
+    public void ExitLevel() {
         if (is_menu)
             return;
         if (!exiting) {
@@ -192,6 +194,10 @@ public class LevelController : MonoBehaviour {
             exiting = true;
             NextLevel(0f, false, true);
         }
+    }
+
+    public void RestartLevel() {
+        NextLevel(0f, false);
     }
 
     // Start is called before the first frame update
@@ -204,6 +210,7 @@ public class LevelController : MonoBehaviour {
         ui_c.UpdateScoreCB(player_score);
         ui_c.SetLivesCount(player_lives);
         ui_c.ResetStateMessage();
+        ui_c.SetWinLoseButtonsVisible(false);
         ui_c.SetPhysicsTimer(physics_enabled, physics_enable_delay);
         ui_c.SetCheatsVisible(false);
 

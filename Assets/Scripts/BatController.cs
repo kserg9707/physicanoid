@@ -26,20 +26,22 @@ public class BatController : MonoBehaviour {
         // return rb.ClosestPoint(rb.position + Vector2.up * transform.lossyScale.y * 10f).y;
     }
 
-    public void MovementInput(float targret_pos_x) {
+    public void MovementInput(float targret_pos_x, float delta_time) {
         targret_pos_x = Mathf.Clamp(targret_pos_x, -allowed_x, allowed_x);
-        float res_x = Mathf.MoveTowards(rb.position.x, targret_pos_x, move_speed * Time.fixedDeltaTime);
+        float res_x = Mathf.MoveTowards(rb.position.x, targret_pos_x, move_speed * delta_time);
         rb.MovePosition(new Vector2(res_x, rb.position.y));
     }
 
     // Start is called before the first frame update
     void Start() {
         mouse_controlled = GameFlowController.Instance.bat_mouse_used;
+        if (!mouse_controlled)
+            last_mouse_position = Mouse.current.position.value;
         rb = GetComponent<Rigidbody2D>();
 
         // GlobalGameSettings ggc = FindObjectOfType<GlobalGameSettings>();
         LevelController lc = FindObjectOfType<LevelController>();
-        move_speed = lc.LevelBallSpeed;
+        move_speed = lc.LevelBallSpeed * 1.25f;
 
         allowed_x = lc.GetBatAllowedRange();
         //last_mouse_position = Input.mousePosition;
@@ -59,17 +61,17 @@ public class BatController : MonoBehaviour {
         //if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A)) {
         if (Keyboard.current.leftArrowKey.isPressed) {
             mouse_controlled = false;
-            MovementInput(-allowed_x);
+            MovementInput(-allowed_x, Time.fixedDeltaTime);
         }
         //if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D)) {
         if (Keyboard.current.rightArrowKey.isPressed) {
             mouse_controlled = false;
-            MovementInput(allowed_x);
+            MovementInput(allowed_x, Time.fixedDeltaTime);
         }
 
         if (mouse_controlled) {
             float target_pos_x = (last_mouse_position.x - Display.main.renderingWidth / 2) / (Display.main.renderingWidth / 2) * allowed_x;  // XXX or native?
-            MovementInput(target_pos_x);
+            MovementInput(target_pos_x, Time.fixedDeltaTime);
         }
         GameFlowController.Instance.bat_mouse_used = mouse_controlled;
         Cursor.visible = mouse_controlled;

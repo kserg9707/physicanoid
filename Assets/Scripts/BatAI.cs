@@ -45,7 +45,7 @@ public class BatAI : MonoBehaviour {
         if (ball_rb.velocity.x > ball_rb.velocity.y)
             target_pos_x = ball_rb.position.x + Mathf.Abs(target_pos_offset) * Mathf.Sign(ball_rb.velocity.x);
 
-        bat_c.MovementInput(target_pos_x);
+        bat_c.MovementInput(target_pos_x, Time.fixedDeltaTime);
     }
 
     void OnCollisionEnter2D(Collision2D other) {

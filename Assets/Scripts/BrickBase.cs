@@ -20,10 +20,12 @@ public class BrickBase : MonoBehaviour {
     private int initial_hits = 1;
     private Vector2 initial_pos;
     private float initial_rot;
+    //private float initial_smoothness = 0f;
     public int score = 1;  // score on destruction
     public float destroy_explosion_force = 10f;  // apply force to other bricks on destruction (ignore mass)
     public float destroy_explosion_raduis = 3f;  // radius of force appliance
     public Color color = Color.green;
+    public bool darken_on_hits = true;
 
     // Start is called before the first frame update
     void Start() {
@@ -81,6 +83,19 @@ public class BrickBase : MonoBehaviour {
         } else {
             if (tough_hit_effect != null)
                 tough_hit_effect.Play();
+            if (darken_on_hits && initial_hits > 1) {
+                MeshRenderer mr = GetComponentInChildren<MeshRenderer>();
+                mr.material.color = Color.Lerp(Color.black, color, (hits_left - 1f) / (initial_hits - 1f));
+                // bool has_smoothness = false;
+                // foreach (string s in mr.material.GetPropertyNames(MaterialPropertyType.Float))
+                //     if (s == "Smoothness") {
+                //         has_smoothness = true;
+                //         break;
+                //     }
+                // if (has_smoothness) {
+                //     mr.material.SetFloat("Smoothness", mr.material.GetFloat("Smoothness") * 0.75f);
+                // }
+            }
         }
     }
 
@@ -90,6 +105,7 @@ public class BrickBase : MonoBehaviour {
         rb.position = initial_pos;
         rb.rotation = initial_rot;
         hits_left = initial_hits;
+        ApplyColor();
         GetComponentInChildren<Collider2D>(true).gameObject.SetActive(true);
     }
 

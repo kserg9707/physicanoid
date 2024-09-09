@@ -17,6 +17,8 @@ public class UIController : MonoBehaviour
     [SerializeField]
     TMP_Text w_text_state;
     [SerializeField]
+    GameObject go_win_lose_buttons;
+    [SerializeField]
     TMP_Text w_text_physics_timer;
     [SerializeField]
     TMP_Text w_text_cheats;
@@ -51,6 +53,17 @@ public class UIController : MonoBehaviour
     public void ResetStateMessage() {
         SetStateMessage("");
         w_bg_state.gameObject.SetActive(false);
+    }
+
+    public void SetWinLoseButtonsVisible(bool visible) {
+        go_win_lose_buttons.SetActive(visible);
+    }
+
+    public void WinLoseRestart() {
+        FindObjectOfType<LevelController>().RestartLevel();
+    }
+    public void WinLoseExit() {
+        FindObjectOfType<LevelController>().ExitLevel();
     }
     
     public void SetCheatsVisible(bool visible) {
