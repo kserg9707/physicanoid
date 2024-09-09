@@ -75,6 +75,8 @@ public class LevelController : MonoBehaviour {
 
     // call it on ball fall, this method tracks lose conditions and resets ball
     public void BallFallCallback() {
+        ui_c.SetCheatsVisible(false);
+
         if (level_win)
             ResetBall();
 
@@ -143,6 +145,7 @@ public class LevelController : MonoBehaviour {
     void LevelWin() {
         if (!launched)
             return;
+        ui_c.SetCheatsVisible(false);
         if (is_menu) {
             bricks_left = bricks.Length;
             ResetBall();
@@ -171,6 +174,7 @@ public class LevelController : MonoBehaviour {
     void LevelLose() {
         if (!launched)
             return;
+        ui_c.SetCheatsVisible(false);
         level_lose = true;
         launched = false;
         ui_c.SetStateMessage("You lose :(   Score: " + player_score.ToString() + "\nPress [Baskspace] to restart level\nPress [ESC] to open menu");
@@ -184,8 +188,9 @@ public class LevelController : MonoBehaviour {
         if (is_menu)
             return;
         if (!exiting) {
+            ui_c.SetCheatsVisible(false);
             exiting = true;
-            NextLevel(0f, true);
+            NextLevel(0f, false, true);
         }
     }
 
@@ -200,6 +205,7 @@ public class LevelController : MonoBehaviour {
         ui_c.SetLivesCount(player_lives);
         ui_c.ResetStateMessage();
         ui_c.SetPhysicsTimer(physics_enabled, physics_enable_delay);
+        ui_c.SetCheatsVisible(false);
 
         initial_ball_c = FindObjectOfType<BallController>();
         bat_c = FindObjectOfType<BatController>();
@@ -290,6 +296,8 @@ public class LevelController : MonoBehaviour {
         launched = true;
         initial_ball_c.transform.SetParent(null);
         initial_ball_c.Unfreeze();
+        if (GameFlowController.Instance.cheats && !is_menu)
+            ui_c.SetCheatsVisible(true);
     }
 
     // Update is called once per frame

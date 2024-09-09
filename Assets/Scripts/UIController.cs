@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
@@ -12,9 +13,13 @@ public class UIController : MonoBehaviour
     [SerializeField]
     TMP_Text w_text_lives;
     [SerializeField]
+    Image w_bg_state;
+    [SerializeField]
     TMP_Text w_text_state;
     [SerializeField]
     TMP_Text w_text_physics_timer;
+    [SerializeField]
+    TMP_Text w_text_cheats;
 
     public void UpdateScoreCB(int score) {
         w_text_score.text = "Score: " + score.ToString();
@@ -39,11 +44,17 @@ public class UIController : MonoBehaviour
     }
 
     public void SetStateMessage(string message) {
+        w_bg_state.gameObject.SetActive(true);
         w_text_state.text = message;
     }
 
     public void ResetStateMessage() {
         SetStateMessage("");
+        w_bg_state.gameObject.SetActive(false);
+    }
+    
+    public void SetCheatsVisible(bool visible) {
+        w_text_cheats.gameObject.SetActive(visible);
     }
 
     // Start is called before the first frame update
