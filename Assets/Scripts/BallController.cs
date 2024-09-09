@@ -90,6 +90,7 @@ public class BallController : MonoBehaviour {
         GlobalGameSettings ggc = FindObjectOfType<GlobalGameSettings>();
         rb.mass = ggc.ball_base_mass;
         ResetVelocity();
+        freezed_vel = rb.velocity;
     }
 
     void FixedUpdate() {
@@ -160,6 +161,7 @@ public class BallController : MonoBehaviour {
     // Update rigidbody velocity to keep specified magnitude
     void KeepSpeed() {
         if (!freezed) {
+            Debug.Log("Fixed vel: was " + rb.velocity.ToString());
             if (use_accel)
                 cur_speed = Mathf.MoveTowards(rb.velocity.magnitude, speed, accel * Time.fixedDeltaTime);
             // else
@@ -169,6 +171,7 @@ public class BallController : MonoBehaviour {
                 rb.velocity = new Vector2(rb.velocity.x, Mathf.Sign(rb.velocity.normalized.y) * vertical_speed_min).normalized * cur_speed;
             }
             last_vel = rb.velocity;
+            Debug.Log("Fixed vel: new " + rb.velocity.ToString());
         }
     }
 

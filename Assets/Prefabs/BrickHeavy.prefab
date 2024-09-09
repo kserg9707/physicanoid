@@ -78,6 +78,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sound_brick_hit: {fileID: 8685617913861558803}
   explode_effect: {fileID: 8505485123233394111}
+  tough_hit_effect: {fileID: 0}
   mass_multiplier: 10
   hits_left: 1
   score: 2
@@ -96,8 +97,8 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: edae8a199c1540e4ab11086d1d18915d, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.5
-  m_Pitch: 0.75
+  m_Volume: 0.6
+  m_Pitch: 0.45
   Loop: 0
   Mute: 0
   Spatialize: 0
@@ -336,7 +337,7 @@ Transform:
   m_GameObject: {fileID: 2980958262996162558}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.252}
+  m_LocalPosition: {x: 0, y: 0, z: 0.256}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

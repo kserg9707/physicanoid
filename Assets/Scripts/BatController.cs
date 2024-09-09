@@ -72,6 +72,7 @@ public class BatController : MonoBehaviour {
             MovementInput(target_pos_x);
         }
         GameFlowController.Instance.bat_mouse_used = mouse_controlled;
+        Cursor.visible = mouse_controlled;
     }
 
     void OnCollisionEnter2D(Collision2D other) {

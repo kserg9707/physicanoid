@@ -31,6 +31,8 @@ public class LevelController : MonoBehaviour {
     public float ball_force_enable_effect_len { get { return initial_ball_c.ForceEnableEffectLen; }}
     // public float physics_enable_effect_len = 1f;  // also from level start
 
+    float mouse_click_delay_at_load_level = 0.5f;
+
     public ParticleSystem bricks_unfreeze_effect;
     public AudioSource sound_ball_fall;
     public AudioSource sound_win;
@@ -171,7 +173,7 @@ public class LevelController : MonoBehaviour {
             return;
         level_lose = true;
         launched = false;
-        ui_c.SetStateMessage("You lose\nPress [Baskspace] to restart level\nPress [ESC] to open menu");
+        ui_c.SetStateMessage("You lose :(   Score: " + player_score.ToString() + "\nPress [Baskspace] to restart level\nPress [ESC] to open menu");
         if (sound_lose != null)
             sound_lose.Play();
         break_coroutines = true;
@@ -189,6 +191,7 @@ public class LevelController : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start() {
+        Cursor.visible = true;
         GameFlowController.Instance.LoadPlayerState(out player_score, out player_lives);
 
         ggc = FindObjectOfType<GlobalGameSettings>();
@@ -293,10 +296,13 @@ public class LevelController : MonoBehaviour {
     void Update() {
         if (!launched && !level_lose && !level_win) {
             //if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)) {
-            if (Keyboard.current.spaceKey.isPressed | Mouse.current.leftButton.isPressed) {
+            if (Keyboard.current.spaceKey.isPressed || (mouse_click_delay_at_load_level <= 0f && Mouse.current.leftButton.isPressed)) {
                 Launch();
             }
         }
+
+        if (mouse_click_delay_at_load_level > 0f)
+            mouse_click_delay_at_load_level -= Time.deltaTime;
 
         //if (Input.GetKeyDown(KeyCode.Backspace)) {
         if (Keyboard.current.backspaceKey.isPressed) {

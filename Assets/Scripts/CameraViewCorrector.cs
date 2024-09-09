@@ -21,18 +21,18 @@ public class CameraViewCorrector : MonoBehaviour
         float fov = cam.fieldOfView;
         Ray r = cam.ScreenPointToRay(Vector3.zero);
         RaycastHit hit;
-        Debug.Log("ray: " + r.origin.ToString() + ", " + r.direction.ToString());
+        // Debug.Log("ray: " + r.origin.ToString() + ", " + r.direction.ToString());
         if (!Physics.Raycast(r, out hit, cam.farClipPlane *10f, ~LayerMask.NameToLayer("screen_test"))) {
             Debug.LogError("Failed to adjust camera: no raycast hit");
             return;
         }
-        Debug.Log(hit.point);
+        // Debug.Log(hit.point);
         Vector3 delta = hit.point - cam.transform.position;
         float target_x = delta.y * 16 / 9;
         // float target_angle = Mathf.Atan2(target_x, delta.z);
         float current_tg = delta.x / delta.z;
         float target_distance = target_x / current_tg;
-        Debug.Log(target_distance);
+        // Debug.Log(target_distance);
 
         cam.transform.position = new Vector3(cam.transform.position.x, cam.transform.position.y, hit.point.z + -target_distance * Mathf.Sign(delta.z));
     }
